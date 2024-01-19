@@ -1,0 +1,10 @@
+*~
+include/
+lib/
+build/
+navcoin/
+
+# sub-modules
+ffi/swig/
+src/bls/
+src/navcoin/

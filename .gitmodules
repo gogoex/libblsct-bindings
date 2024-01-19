@@ -1,0 +1,3 @@
+[submodule "navcoin"]
+	path = navcoin
+	url = https://github.com/navcoin/navcoin.git

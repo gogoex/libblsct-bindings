@@ -1,0 +1,8 @@
+blsct_wrap.*
+blsct.go
+!Makefile
+main
+src
+include
+blsct/*.cxx
+blsct/*.go
