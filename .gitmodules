@@ -1,3 +1,4 @@
 [submodule "navcoin"]
 	path = navcoin
-	url = https://github.com/navcoin/navcoin.git
+	url = https://github.com/gogoex/navcoin.git
+	branch = add-blsct-api-functions
