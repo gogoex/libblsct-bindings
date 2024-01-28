@@ -2,6 +2,7 @@
 include/
 lib/
 build/
+*.o
 
 # sub-modules
 ffi/swig/

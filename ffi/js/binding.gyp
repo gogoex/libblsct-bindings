@@ -9,8 +9,9 @@
          '../..',
       ],
       'libraries': [
-        '../../../src/bls/lib/libbls384_256.so',
-        '../../../src/bls/mcl/lib/libmcl.so',
+        '../../lib/libblsct.a',
+        '../../lib/libbls384_256.a',
+        '../../lib/libmcl.a',
       ],
       'sources': [
         '../../src/lib.cpp',
