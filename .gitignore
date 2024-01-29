@@ -3,6 +3,7 @@ include/
 lib/
 build/
 *.o
+test
 
 # sub-modules
 ffi/swig/
