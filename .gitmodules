@@ -2,3 +2,6 @@
 	path = navcoin
 	url = https://github.com/gogoex/navcoin.git
 	branch = add-blsct-api-functions
+[submodule "swig"]
+	path = swig
+	url = https://github.com/swig/swig.git
