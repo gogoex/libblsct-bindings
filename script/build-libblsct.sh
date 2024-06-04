@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -17,10 +17,8 @@ Darwin*)
   ;;
 esac
 
-echo "# of cores: ${num_cores}"
-echo "os: ${os}"
+pushd ./navcoin
 
-pushd navcoin
 ./autogen.sh
 
 if [ "$os" == "linux" ]; then
@@ -38,6 +36,10 @@ fi
 make -j${num_cores}
 
 popd
+
+if [ ! -d ./lib ]; then
+  mkdir ./lib
+fi
 
 cp ./navcoin/src/libblsct.a ./lib
 cp ./navcoin/src/bls/lib/libbls384_256.a ./lib

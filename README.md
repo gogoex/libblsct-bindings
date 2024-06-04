@@ -9,16 +9,15 @@
 1. Initialize and update `navcoin` and `swig` submodule:
 
    ```bash
-   git submodule update --init --recursive
+   git submodule update --init --remote --recursive
    ```
-
 
 ### Install libblsct
 
 1. Build `src/libblsct.a`:
 
    ```bash
-   ./build-libblsct.sh
+   ./script/build-libblsct.sh
    ```
 
 1. Initialize and update `swig` submodule:
@@ -44,19 +43,15 @@
    brew install ...
    ```
 
-1. Build `swig` and install it under `ffi/swig` directoy
+1. Build `swig` and install it under `swig` directoy
 
    ```bash
-   cd swig
-   ./autogen.sh
-   ./configure --prefix=$(pwd)
-   make -j8
-   make install
+   ./script/build-swig.sh
    ```
 
 1. Add locally built `Swig` to the `PATH`
 
    ```bash
-   PATH=$PATH:$(pwd)/bin
+   ./script/activate-swig.sh
    ```
 
