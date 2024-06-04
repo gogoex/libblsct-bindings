@@ -2,15 +2,18 @@
 
 ## Preparation
 
-### Install libblsct
+### Common
 
 1. Move to the repository root directory
 
-1. Initialize and update `navcoin` submodule:
+1. Initialize and update `navcoin` and `swig` submodule:
 
    ```bash
    git submodule update --init --recursive
    ```
+
+
+### Install libblsct
 
 1. Build `src/libblsct.a`:
 

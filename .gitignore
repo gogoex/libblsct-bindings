@@ -6,6 +6,5 @@ build/
 test
 
 # sub-modules
-ffi/swig/
 src/bls/
 src/navcoin/
