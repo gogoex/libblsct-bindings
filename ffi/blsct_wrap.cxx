@@ -1457,26 +1457,6 @@ template <typename T> T SwigValueInit() {
 #include <stdint.h>		// Use the C99 official header
 
 
-SWIGINTERN
-int SWIG_AsVal_int (SWIGV8_VALUE valRef, int* val)
-{
-  if (!valRef->IsNumber()) {
-    return SWIG_TypeError;
-  }
-  if(val) *val = SWIGV8_INTEGER_VALUE(valRef);
-
-  return SWIG_OK;
-}
-
-
-SWIGINTERNINLINE
-SWIGV8_VALUE
-SWIG_From_bool  (bool value)
-{
-  return SWIGV8_BOOLEAN_NEW(value);
-}
-
-
 SWIGINTERN swig_type_info*
 SWIG_pchar_descriptor(void)
 {
@@ -1533,36 +1513,29 @@ SWIG_AsCharPtrAndSize(SWIGV8_VALUE valRef, char** cptr, size_t* psize, int *allo
 
 
 
+SWIGINTERNINLINE
+SWIGV8_VALUE
+SWIG_From_bool  (bool value)
+{
+  return SWIGV8_BOOLEAN_NEW(value);
+}
+
+
+SWIGINTERN
+int SWIG_AsVal_int (SWIGV8_VALUE valRef, int* val)
+{
+  if (!valRef->IsNumber()) {
+    return SWIG_TypeError;
+  }
+  if(val) *val = SWIGV8_INTEGER_VALUE(valRef);
+
+  return SWIG_OK;
+}
+
+
 #define SWIGV8_INIT libblsct_initialize
 
 
-
-
-static SwigV8ReturnValue _wrap_blsct_init(const SwigV8Arguments &args) {
-  SWIGV8_HANDLESCOPE();
-  
-  SWIGV8_VALUE jsresult;
-  enum Chain arg1 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  bool result;
-  
-  if (args.Length() < 1 || args.Length() > 1) SWIG_exception_fail(SWIG_ERROR, "Illegal number of arguments for _wrap_blsct_init.");
-  
-  ecode1 = SWIG_AsVal_int(args[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "blsct_init" "', argument " "1"" of type '" "enum Chain""'");
-  } 
-  arg1 = static_cast< enum Chain >(val1);result = (bool)blsct_init(arg1);
-  jsresult = SWIG_From_bool(static_cast< bool >(result));
-  
-  
-  SWIGV8_RETURN(jsresult);
-  
-  goto fail;
-fail:
-  SWIGV8_RETURN(SWIGV8_UNDEFINED());
-}
 
 
 static SwigV8ReturnValue _wrap_blsct_decode_address(const SwigV8Arguments &args) {
@@ -2010,8 +1983,7 @@ void SWIGV8_INIT (SWIGV8_OBJECT exports_obj, SWIGV8_VALUE /*module*/, v8::Local<
   
 
   /* add static class functions and variables */
-  SWIGV8_AddStaticFunction(exports_obj, "blsct_init", _wrap_blsct_init, context);
-SWIGV8_AddStaticFunction(exports_obj, "blsct_decode_address", _wrap_blsct_decode_address, context);
+  SWIGV8_AddStaticFunction(exports_obj, "blsct_decode_address", _wrap_blsct_decode_address, context);
 SWIGV8_AddStaticFunction(exports_obj, "blsct_encode_address", _wrap_blsct_encode_address, context);
 
 

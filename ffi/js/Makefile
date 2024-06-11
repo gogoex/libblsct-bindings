@@ -1,11 +1,11 @@
-lib := ../../lib
+lib := ../../../lib
 swig := ../../swig/bin/swig
 module := blsct
-interface := ../$(module).i
+interface := ./$(module).i
 wrap := $(module)_wrap.cxx
 
 ./build/Release/blsct.node: $(wrap)
-	node-gyp configure build
+	node-gyp configure && node-gyp build --silly 
 
 $(wrap): $(interface)
 	$(swig) -c++ -javascript -node $(interface)
