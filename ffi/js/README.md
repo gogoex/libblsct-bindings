@@ -1,14 +1,17 @@
-## Requirements
-- swig 4.1.0 or above
-- node v12-v18
-- node-gyp
+## Preparation  
 
-## Installing `node-gyp`
+### Install `libblsct.a`, `libbls384_256.a` and `libmcl.a`
+
+Follow steps described in the top-level [README.md](../../README.md)
+
+### Install `node-gyp`
+
 ```bash
 $ npm i -g node-gyp
 ```
 
 ## Building `blsct.node` module
+
 ```bash
 $ make
 ```

@@ -1,8 +1,8 @@
-mcllib := ../../../src/bls/mcl/lib
-swig := ../swig/swig
+lib := ../../lib
+swig := ../../swig/bin/swig
 module := blsct
+interface := ../$(module).i
 wrap := $(module)_wrap.cxx
-interface := $(module).i
 
 ./build/Release/blsct.node: $(wrap)
 	node-gyp configure build
@@ -11,7 +11,7 @@ $(wrap): $(interface)
 	$(swig) -c++ -javascript -node $(interface)
 
 run:
-	cd build && LD_LIBRARY_PATH=$(mcllib) node ../test.js
+	cd build && LD_LIBRARY_PATH=$(lib) node ../test.js
 
 clean:
 	rm -f $(wrap)
