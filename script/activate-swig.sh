@@ -2,5 +2,5 @@
 
 set -e
 
-PATH=$PATH:./swig/bin
+export PATH=$(pwd)/swig/bin:$PATH
 

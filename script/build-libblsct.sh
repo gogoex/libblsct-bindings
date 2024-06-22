@@ -21,18 +21,27 @@ pushd ./navcoin
 
 ./autogen.sh
 
-if [ "$os" == "linux" ]; then
-  ./configure --enable-build-libblsct-only
-elif [ "$os" == "macos" ]; then
+if [ "$os" == 'linux' ]; then
+  arch=$(uname -m)
+  DEPENDS_OPT=
+  if [ "$arch" == 'x86_64' ]; then
+    depends_dir=$(find ./depends -type d -name 'x86_64*' -maxdepth 1 | head -n 1)
+    DEPENDS_OPT="--prefix=$(pwd)/${depends_dir}"
+  fi
+  ./configure --enable-build-libblsct-only $DEPENDS_OPT
+
+elif [ "$os" == 'macos' ]; then
   pushd depends
   make -j${num_cores}
   popd
-  aarch64_dir=$(find ./depends -type d -name "aarch64*" -maxdepth 1 | head -n 1)
-  ./configure --prefix=$(pwd)/${aarch64_dir} --enable-build-libblsct-only
+  depends_dir=$(find ./depends -type d -name 'aarch64*' -maxdepth 1 | head -n 1)
+  ./configure --prefix=$(pwd)/${depends_dir} --enable-build-libblsct-only
 else
+
   exit 0
 fi
 
+make clean
 make -j${num_cores}
 
 popd

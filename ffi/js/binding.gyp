@@ -15,10 +15,10 @@
       'sources': [
         'blsct_wrap.cxx',
       ],
-      'cflags_cc': ['-std=c++20'],
+      'cflags_cc': ['-std=c++20 -fPIC -fexceptions'],
       'xcode_settings': {
         'CLANG_CXX_LANGUAGE_STANDARD': 'c++20 -fexceptions',
-        'OTHER_CFLAGS': ['-std=c++20 -fexceptions'],
+        'OTHER_CFLAGS': ['-std=c++20 -fexceptios'],
         'OTHER_CPLUSPLUSFLAGS': ['-std=c++20', '-fexceptions']
       },
     }

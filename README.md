@@ -57,6 +57,6 @@
 1. Add locally built `Swig` to the `PATH`
 
    ```bash
-   ./script/activate-swig.sh
+   source ./script/activate-swig.sh
    ```
 
