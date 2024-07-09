@@ -50,7 +50,4 @@ if [ ! -d ./lib ]; then
   mkdir ./lib
 fi
 
-cp ./navcoin/src/libblsct.a ./lib
-cp ./navcoin/src/bls/lib/libbls384_256.a ./lib
-cp ./navcoin/src/bls/mcl/lib/libmcl.a ./lib
-
+./script/deploy-libblsct.sh
