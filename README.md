@@ -6,7 +6,13 @@
 
 1. Move to the repository root directory
 
-1. Initialize and update `navcoin` and `swig` submodule:
+1. Create a symbolic link to `navio-core`
+
+   ```bash
+   ln -s path/to/navio-core
+   ```
+
+1. Initialize and update `swig` submodule:
 
    ```bash
    git submodule update --init --remote --recursive

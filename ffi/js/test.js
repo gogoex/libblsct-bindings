@@ -52,23 +52,45 @@ blsct.dispose_public_key(pk2)
 
 // range proof
 {
-  const vs = blsct.create_uint64_t_array(1)
-  vs[0] = 123
-  const nonce = blsct.gen_random_point()
-  const msg = 'navcoin'
-  const token_id = blsct.gen_default_token_id()
-  const rp = blsct.build_range_proof(
-    vs,
-    0,
-    nonce,
-    msg,
-    msg.length + 1, // TODO add this on the c side
-    token_id
-  )
-  const rps = blsct.create_range_proof_array(1)
-  rps[0] = rp.value
-  const is_valid = blsct.verify_range_proofs(rps, 1)
-  console.log(`proof is valid? ${is_valid.value}`)
+  const rp_vec = blsct.create_range_proof_vec()
+  {
+    const vs = blsct.create_uint64_t_vec()
+    blsct.add_uint64_t_to_vec(vs, 123)
+    blsct.add_uint64_t_to_vec(vs, 234)
+    const nonce = blsct.gen_random_point()
+    const msg = 'navcoin'
+    const token_id = blsct.gen_default_token_id()
+    const build_rv = blsct.build_range_proof(
+      vs,
+      1,
+      nonce,
+      msg,
+      msg.length,
+      token_id
+    )
+
+    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+  }
+  {
+    const vs = blsct.create_uint64_t_vec()
+    blsct.add_uint64_t_to_vec(vs, 456)
+    const nonce = blsct.gen_random_point()
+    const msg = 'navcoin'
+    const token_id = blsct.gen_default_token_id()
+    const build_rv = blsct.build_range_proof(
+      vs,
+      1,
+      nonce,
+      msg,
+      msg.length,
+      token_id
+    )
+
+    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+  }
+
+  const veri_rv = blsct.verify_range_proofs(rp_vec)
+  console.log(`proof is valid? ${veri_rv.value}`)
 }
 
 console.log('done')

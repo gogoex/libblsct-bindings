@@ -4,7 +4,4 @@ lib/
 build/
 *.o
 test
-
-# sub-modules
-src/bls/
-src/navcoin/
+navio-core
