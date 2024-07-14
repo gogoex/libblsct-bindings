@@ -129,6 +129,8 @@ export BlsctTokenId* gen_token_id(
 
 export BlsctTokenId* gen_default_token_id();
 
+export void dispose_token_id(const BlsctTokenId* blsct_token_id);
+
 export BlsctRpRetVal* build_range_proof(
   const void* uint64_vs,
   const size_t num_uint64_vs,
@@ -136,6 +138,10 @@ export BlsctRpRetVal* build_range_proof(
   const char* blsct_message,
   const size_t blsct_message_size,
   const BlsctTokenId* blsct_token_id
+);
+
+export void dispose_range_proof(
+    const BlsctRangeProof* blsct_range_proof
 );
 
 export BlsctBoolRetVal* verify_range_proofs(

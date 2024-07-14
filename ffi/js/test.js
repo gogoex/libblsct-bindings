@@ -39,15 +39,19 @@ blsct.dispose_public_key(pk2)
   const dpk = blsct.gen_double_pub_key(pk1, pk2)
 
   const rv = blsct.encode_address(dpk, blsct.Bech32) 
-
   console.log('enc addr', rv)
 }
 
 // token id
 {
   let token_id = blsct.gen_default_token_id();
+  blsct.dispose_token_id(token_id)
+
   token_id = blsct.gen_token_id(2323)
+  blsct.dispose_token_id(token_id)
+
   token_id = blsct.gen_token_id_with_subid(23, 45) 
+  blsct.dispose_token_id(token_id)
 }
 
 // range proof
@@ -70,6 +74,7 @@ blsct.dispose_public_key(pk2)
     )
 
     blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+    blsct.dispose_range_proof(build_rv.value)
   }
   {
     const vs = blsct.create_uint64_t_vec()
@@ -87,6 +92,7 @@ blsct.dispose_public_key(pk2)
     )
 
     blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+    blsct.dispose_range_proof(build_rv.value)
   }
  
   const veri_rv = blsct.verify_range_proofs(rp_vec)
