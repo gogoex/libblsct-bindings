@@ -56,7 +56,7 @@ blsct.dispose_public_key(pk2)
   {
     const vs = blsct.create_uint64_t_vec()
     blsct.add_uint64_t_to_vec(vs, 123)
-    blsct.add_uint64_t_to_vec(vs, 234)
+    //blsct.add_uint64_t_to_vec(vs, 234)
     const nonce = blsct.gen_random_point()
     const msg = 'navcoin'
     const token_id = blsct.gen_default_token_id()
