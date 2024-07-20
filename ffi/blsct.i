@@ -5,21 +5,23 @@
 %}
 
 %inline %{
-
-  void* create_uint64_t_vec() {
-    return static_cast<void*>(new std::vector<uint64_t>);
+  void* create_uint64_vec() {
+    auto vec = new std::vector<uint64_t>;
+    return static_cast<void*>(vec);
   }
 
-  void dispose_uint64_t_vec(const void* vec) {
+  void dispose_uint64_vec(void* vp_vec) {
+    auto vec = static_cast<const std::vector<uint64_t>*>(vp_vec);
+    delete vec;
   }
 
-  void add_uint64_t_to_vec(
-    void* vp_uint64_ts,
+  void add_to_uint64_vec(
+    void* vp_uint64_vec,
     const uint64_t n
   ) {
-    auto uint64_ts = static_cast<std::vector<uint64_t>*>(vp_uint64_ts);
+    auto uint64_vec = static_cast<std::vector<uint64_t>*>(vp_uint64_vec);
 
-    uint64_ts->push_back(n);
+    uint64_vec->push_back(n);
   }
 
   void* create_range_proof_vec() {
@@ -27,15 +29,16 @@
   }
 
   void dispose_range_proof_vec(const void* vp_range_proofs) {
-    auto range_proofs = static_cast<const std::vector<uint64_t>*>(vp_range_proofs);
+    auto range_proofs = static_cast<const std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
     delete range_proofs; 
   }
 
   void add_range_proof_to_vec(
     void* vp_range_proofs,
-    const BlsctRangeProof* blsct_range_proof
+    void* vp_blsct_range_proof
   ) {
     auto range_proofs = static_cast<std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
+    auto blsct_range_proof = static_cast<BlsctRangeProof*>(vp_blsct_range_proof);
 
     // unserialize range proof
     bulletproofs::RangeProof<Mcl> range_proof;
@@ -66,25 +69,14 @@ export enum AddressEncoding {
 };
 
 typedef struct {
-  RetValType type;
   BLSCT_RESULT result;
   void* value;
 } BlsctRetVal;
 
 typedef struct {
   BLSCT_RESULT result;
-  char* value;
-} BlsctStrRetVal;
-
-typedef struct {
-  BLSCT_RESULT result;
   bool value;
 } BlsctBoolRetVal;
-
-typedef struct {
-  BLSCT_RESULT result;
-  BlsctRangeProof* value;
-} BlsctRpRetVal;
 
 export void init();
 export bool set_chain(enum Chain chain);
@@ -96,24 +88,18 @@ export BlsctPoint* gen_random_point();
 
 export uint64_t scalar_to_uint64(BlsctScalar* blsct_scalar);
 
-export void dispose_scalar(BlsctScalar* blsct_scalar);
-export void dispose_point(BlsctPoint* blsct_point);
-
 export BlsctPubKey* gen_random_public_key();
-export void dispose_public_key(BlsctPubKey* blsct_pub_key);
 
 export BlsctDoublePubKey* gen_double_pub_key(
   const BlsctPubKey* pk1,
   const BlsctPubKey* pk2
 );
 
-export void dispose_double_pub_key(const BlsctDoublePubKey* blsct_dpk);
-
 export BlsctRetVal* decode_address(
   const char* blsct_enc_addr
 );
 
-export BlsctStrRetVal* encode_address(
+export BlsctRetVal* encode_address(
   const void* blsct_dpk,
   const enum AddressEncoding encoding
 );
@@ -129,22 +115,26 @@ export BlsctTokenId* gen_token_id(
 
 export BlsctTokenId* gen_default_token_id();
 
-export void dispose_token_id(const BlsctTokenId* blsct_token_id);
-
-export BlsctRpRetVal* build_range_proof(
-  const void* uint64_vs,
-  const size_t num_uint64_vs,
+export BlsctRetVal* build_range_proof(
+  const void* vp_int_vec,
   const BlsctPoint* blsct_nonce,
   const char* blsct_message,
-  const size_t blsct_message_size,
   const BlsctTokenId* blsct_token_id
-);
-
-export void dispose_range_proof(
-    const BlsctRangeProof* blsct_range_proof
 );
 
 export BlsctBoolRetVal* verify_range_proofs(
   const void* vp_range_proofs
 );
 
+export BlsctOutPoint* blsct_gen_out_point(
+    const char* tx_id_c_str,
+    const uint32_t n
+);
+
+export void dispose_ret_val(BlsctRetVal* rv);
+export void dispose_bool_ret_val(BlsctBoolRetVal* rv);
+export void dispose_scalar(BlsctScalar* x);
+export void dispose_point(BlsctPoint* x);
+export void dispose_token_id(BlsctTokenId* x);
+export void dispose_public_key(BlsctPubKey* x);
+export void dispose_double_pub_key(BlsctDoublePubKey* x);
