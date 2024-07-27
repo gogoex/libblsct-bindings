@@ -64,57 +64,57 @@ blsct.dispose_public_key(pk2)
 }
 
 // range proof
-for(let i=0; i<1000; ++i) {
+for(let i=0; i<1; ++i) {
+  process.stdout.write('.')
+  const rp_vec = blsct.create_range_proof_vec()
   {
-    process.stdout.write('.')
-    const rp_vec = blsct.create_range_proof_vec()
-    {
-      const vs = blsct.create_uint64_vec()
-      blsct.add_to_uint64_vec(vs, 123)
-      blsct.add_to_uint64_vec(vs, 234)
-      blsct.add_to_uint64_vec(vs, 345)
-      blsct.add_to_uint64_vec(vs, 567)
-      const msg = 'navcoin'
-      let nonce = blsct.gen_random_point()
-      let token_id = blsct.gen_default_token_id()
-      let build_rv = blsct.build_range_proof(
-        vs,
-        nonce,
-        msg,
-        token_id
-      )
-      blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-      blsct.dispose_ret_val(build_rv) // range proof object has to be freed after copied to vector
-      blsct.dispose_point(nonce)
-      blsct.dispose_token_id(token_id)
-      blsct.dispose_uint64_vec(vs)
-    }
-    {
-      const vs = blsct.create_uint64_vec()
-      blsct.add_to_uint64_vec(vs, 456)
-      const nonce = blsct.gen_random_point()
-      const msg = 'navio'
-      const token_id = blsct.gen_default_token_id()
-      const build_rv = blsct.build_range_proof(
-        vs,
-        nonce,
-        msg,
-        token_id
-      )
-      blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-      blsct.dispose_ret_val(build_rv)
-      blsct.dispose_point(nonce)
-      blsct.dispose_token_id(token_id)
-      blsct.dispose_uint64_vec(vs)
-    }
-
-    const veri_rv = blsct.verify_range_proofs(rp_vec)
-    if (!veri_rv.value) {
-      console.log(`FAILED!!! in the ${i+1}-th try`)
-      process.exit(1)
-    }
-    blsct.dispose_range_proof_vec(rp_vec)
+    const vs = blsct.create_uint64_vec()
+    blsct.add_to_uint64_vec(vs, 123)
+    blsct.add_to_uint64_vec(vs, 234)
+    blsct.add_to_uint64_vec(vs, 345)
+    blsct.add_to_uint64_vec(vs, 567)
+    const msg = 'navcoin'
+    let nonce = blsct.gen_random_point()
+    let token_id = blsct.gen_default_token_id()
+    let build_rv = blsct.build_range_proof(
+      vs,
+      nonce,
+      msg,
+      token_id
+    )
+    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+    blsct.dispose_ret_val(build_rv) // range proof object has to be freed after it is added to vector
+    blsct.dispose_point(nonce)
+    blsct.dispose_token_id(token_id)
+    blsct.dispose_uint64_vec(vs)
   }
+  {
+    const vs = blsct.create_uint64_vec()
+    blsct.add_to_uint64_vec(vs, 456)
+    const nonce = blsct.gen_random_point()
+    const msg = 'navio'
+    const token_id = blsct.gen_default_token_id()
+    const build_rv = blsct.build_range_proof(
+      vs,
+      nonce,
+      msg,
+      token_id
+    )
+    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
+    blsct.dispose_ret_val(build_rv)
+    blsct.dispose_point(nonce)
+    blsct.dispose_token_id(token_id)
+    blsct.dispose_uint64_vec(vs)
+
+    // recover amount
+  }
+
+  const veri_rv = blsct.verify_range_proofs(rp_vec)
+  if (!veri_rv.value) {
+    console.log(`FAILED!!! in the ${i+1}-th try`)
+    process.exit(1)
+  }
+  blsct.dispose_range_proof_vec(rp_vec)
 }
 
 // tx

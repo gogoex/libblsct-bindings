@@ -28,11 +28,6 @@
     return static_cast<void*>(new std::vector<bulletproofs::RangeProof<Mcl>>);
   }
 
-  void dispose_range_proof_vec(const void* vp_range_proofs) {
-    auto range_proofs = static_cast<const std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
-    delete range_proofs; 
-  }
-
   void add_range_proof_to_vec(
     void* vp_range_proofs,
     void* vp_blsct_range_proof
@@ -51,6 +46,48 @@
 
     // and move to the vector
     range_proofs->push_back(std::move(range_proof));
+  }
+
+  void dispose_range_proof_vec(const void* vp_range_proofs) {
+    auto range_proofs = static_cast<const std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
+    delete range_proofs; 
+  }
+
+  void* create_tx_in_vec() {
+    return static_cast<void*>(new std::vector<BlsctTxIn>);
+  }
+
+  void add_tx_in_to_vec(
+    void* vp_tx_ins,
+    void* vp_tx_in
+  ) {
+    auto tx_ins = static_cast<std::vector<BlsctTxIn>*>(vp_tx_ins);
+    auto tx_in = static_cast<BlsctTxIn*>(vp_tx_in);
+
+    tx_ins->push_back(*tx_in);
+  }
+
+  void dispose_tx_in_vec(const void* vp_tx_ins) {
+    auto tx_ins = static_cast<const std::vector<BlsctTxIn>*>(vp_tx_ins);
+    delete tx_ins; 
+  }
+
+  void* create_amount_recovery_req_vec() {
+    return static_cast<void*>(new std::vector<BlsctAmountRecoveryReq>);
+  }
+
+  void add_to_amount_recovery_req_vec(
+    void* vp_amt_recovery_req_vec,
+    void* vp_amt_recovery_req
+  ) {
+    auto vec = static_cast<std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
+    auto req = static_cast<BlsctAmountRecoveryReq*>(vp_amt_recovery_req);
+    vec->push_back(*req);
+  }
+
+  void dispose_amount_recovery_req_vec(void* vp_amt_recovery_req_vec) {
+    auto vec = static_cast<const std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
+    delete vec;
   }
 %}
 
@@ -77,6 +114,11 @@ typedef struct {
   BLSCT_RESULT result;
   bool value;
 } BlsctBoolRetVal;
+
+typedef struct {
+  BLSCT_RESULT result;
+  void* value;
+} BlsctAmountsRetVal;
 
 export void init();
 export bool set_chain(enum Chain chain);
@@ -126,9 +168,13 @@ export BlsctBoolRetVal* verify_range_proofs(
   const void* vp_range_proofs
 );
 
-export BlsctOutPoint* blsct_gen_out_point(
+export BlsctOutPoint* gen_out_point(
     const char* tx_id_c_str,
     const uint32_t n
+);
+
+export BlsctAmountsRetVal* recover_amount(
+    void* vp_amt_recovery_req_vec
 );
 
 export void dispose_ret_val(BlsctRetVal* rv);
