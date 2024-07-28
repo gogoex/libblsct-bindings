@@ -101,12 +101,29 @@ for(let i=0; i<1; ++i) {
       token_id
     )
     blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-    blsct.dispose_ret_val(build_rv)
-    blsct.dispose_point(nonce)
     blsct.dispose_token_id(token_id)
     blsct.dispose_uint64_vec(vs)
 
     // recover amount
+    const reqs = blsct.create_amount_recovery_req_vec()
+    const req = blsct.gen_recover_amount_req(
+      build_rv.value,
+      nonce
+    )
+    blsct.add_to_amount_recovery_req_vec(reqs, req)
+    const res = blsct.recover_amount(reqs)
+
+    const res_size = blsct.get_amount_recovery_result_size(res.value)
+    console.log(`recovery res size = ${res_size}`)
+    for(let i=0; i<res_size; ++i) {
+      const msg = blsct.get_amount_recovery_result_msg(res.value, i)
+      const amount = blsct.get_amount_recovery_result_amount(res.value, i)
+      console.log(`recovery res[${i}] -> ${msg}:${amount}`)
+    }
+    blsct.dispose_amounts_ret_val(res)
+
+    blsct.dispose_ret_val(build_rv)
+    blsct.dispose_point(nonce)
   }
 
   const veri_rv = blsct.verify_range_proofs(rp_vec)

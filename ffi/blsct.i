@@ -83,6 +83,33 @@
     auto vec = static_cast<std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
     auto req = static_cast<BlsctAmountRecoveryReq*>(vp_amt_recovery_req);
     vec->push_back(*req);
+    printf("req added\n");
+  }
+
+  size_t get_amount_recovery_result_size(
+    void* vp_amt_recovery_req_vec
+  ) {
+    auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
+    
+    return vec->size();
+  }
+
+  const char* get_amount_recovery_result_msg(
+    void* vp_amt_recovery_req_vec,
+    size_t idx
+  ) {
+    auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
+    
+    return vec->at(idx).msg;
+  }
+
+  uint64_t get_amount_recovery_result_amount(
+    void* vp_amt_recovery_req_vec,
+    size_t idx
+  ) {
+    auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
+    
+    return vec->at(idx).amount;
   }
 
   void dispose_amount_recovery_req_vec(void* vp_amt_recovery_req_vec) {
@@ -173,12 +200,19 @@ export BlsctOutPoint* gen_out_point(
     const uint32_t n
 );
 
+export BlsctAmountRecoveryReq* gen_recover_amount_req(
+    const void* vp_blsct_range_proof,
+    const void* vp_blsct_nonce
+);
+
 export BlsctAmountsRetVal* recover_amount(
     void* vp_amt_recovery_req_vec
 );
 
 export void dispose_ret_val(BlsctRetVal* rv);
 export void dispose_bool_ret_val(BlsctBoolRetVal* rv);
+export void dispose_amounts_ret_val(BlsctAmountsRetVal* rv);
+
 export void dispose_scalar(BlsctScalar* x);
 export void dispose_point(BlsctPoint* x);
 export void dispose_token_id(BlsctTokenId* x);
