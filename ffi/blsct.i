@@ -5,12 +5,33 @@
 %}
 
 %inline %{
+#define HANDLE_MEM_ALLOC_FAILURE(name) \
+if (name == nullptr) { \
+  printf("ERROR: Memory allocation failed\n"); \
+  return nullptr; \
+}
+
+#define RETURN_RET_VAL_IF_NULL(p, ret_val) \
+if (p == nullptr) { \
+  printf("ERROR: " #p " is null\n"); \
+  return ret_val; \
+}
+
+#define RETURN_IF_NULL(p) \
+if (p == nullptr) { \
+  printf("ERROR: " #p " is null\n"); \
+  return; \
+}
+
+  // uint64_vec
   void* create_uint64_vec() {
-    auto vec = new std::vector<uint64_t>;
+    auto vec = new(std::nothrow) std::vector<uint64_t>;
+    HANDLE_MEM_ALLOC_FAILURE(vec);
     return static_cast<void*>(vec);
   }
 
   void dispose_uint64_vec(void* vp_vec) {
+    if (vp_vec == nullptr) return;
     auto vec = static_cast<const std::vector<uint64_t>*>(vp_vec);
     delete vec;
   }
@@ -19,19 +40,26 @@
     void* vp_uint64_vec,
     const uint64_t n
   ) {
+    RETURN_IF_NULL(vp_uint64_vec);
     auto uint64_vec = static_cast<std::vector<uint64_t>*>(vp_uint64_vec);
 
     uint64_vec->push_back(n);
   }
 
+  // range_proof_vec
   void* create_range_proof_vec() {
-    return static_cast<void*>(new std::vector<bulletproofs::RangeProof<Mcl>>);
+    auto vec = new(std::nothrow) std::vector<bulletproofs::RangeProof<Mcl>>;
+    HANDLE_MEM_ALLOC_FAILURE(vec);
+    return static_cast<void*>(vec);
   }
 
   void add_range_proof_to_vec(
     void* vp_range_proofs,
     void* vp_blsct_range_proof
   ) {
+    RETURN_IF_NULL(vp_range_proofs);
+    RETURN_IF_NULL(vp_blsct_range_proof);
+
     auto range_proofs = static_cast<std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
     auto blsct_range_proof = static_cast<BlsctRangeProof*>(vp_blsct_range_proof);
 
@@ -49,18 +77,25 @@
   }
 
   void dispose_range_proof_vec(const void* vp_range_proofs) {
+    if (vp_range_proofs == nullptr) return;
     auto range_proofs = static_cast<const std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
     delete range_proofs; 
   }
 
+  // tx_in_vec
   void* create_tx_in_vec() {
-    return static_cast<void*>(new std::vector<BlsctTxIn>);
+    auto vec = new(std::nothrow) std::vector<BlsctTxIn>;
+    HANDLE_MEM_ALLOC_FAILURE(vec);
+    return static_cast<void*>(vec);
   }
 
   void add_tx_in_to_vec(
     void* vp_tx_ins,
     void* vp_tx_in
   ) {
+    RETURN_IF_NULL(vp_tx_ins);
+    RETURN_IF_NULL(vp_tx_in);
+
     auto tx_ins = static_cast<std::vector<BlsctTxIn>*>(vp_tx_ins);
     auto tx_in = static_cast<BlsctTxIn*>(vp_tx_in);
 
@@ -72,23 +107,30 @@
     delete tx_ins; 
   }
 
+  // amount_recovery_req_vec
   void* create_amount_recovery_req_vec() {
-    return static_cast<void*>(new std::vector<BlsctAmountRecoveryReq>);
+    auto vec = new(std::nothrow) std::vector<BlsctAmountRecoveryReq>;
+    RETURN_RET_VAL_IF_NULL(vec, nullptr);
+    return static_cast<void*>(vec);
   }
 
   void add_to_amount_recovery_req_vec(
     void* vp_amt_recovery_req_vec,
     void* vp_amt_recovery_req
   ) {
+    RETURN_IF_NULL(vp_amt_recovery_req_vec);
+    RETURN_IF_NULL(vp_amt_recovery_req);
+
     auto vec = static_cast<std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
     auto req = static_cast<BlsctAmountRecoveryReq*>(vp_amt_recovery_req);
     vec->push_back(*req);
-    printf("req added\n");
   }
 
   size_t get_amount_recovery_result_size(
     void* vp_amt_recovery_req_vec
   ) {
+    if (vp_amt_recovery_req_vec == nullptr) {
+    }
     auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
     
     return vec->size();
@@ -98,6 +140,8 @@
     void* vp_amt_recovery_req_vec,
     size_t idx
   ) {
+    RETURN_RET_VAL_IF_NULL(vp_amt_recovery_req_vec, nullptr);
+
     auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
     
     return vec->at(idx).msg;
@@ -107,12 +151,15 @@
     void* vp_amt_recovery_req_vec,
     size_t idx
   ) {
+    RETURN_RET_VAL_IF_NULL(vp_amt_recovery_req_vec, 0);
+
     auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
     
     return vec->at(idx).amount;
   }
 
   void dispose_amount_recovery_req_vec(void* vp_amt_recovery_req_vec) {
+    RETURN_IF_NULL(vp_amt_recovery_req_vec);
     auto vec = static_cast<const std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
     delete vec;
   }
