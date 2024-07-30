@@ -1,0 +1,14 @@
+{
+  "name": "blsct-api",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}

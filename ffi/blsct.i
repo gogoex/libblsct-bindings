@@ -23,6 +23,15 @@ if (p == nullptr) { \
   return; \
 }
 
+  void nullify_ret_val_value(void* blsct_ret_val) {
+    auto rv = static_cast<BlsctRetVal*>(blsct_ret_val);
+    rv->value = nullptr;
+  }
+
+  const char* as_string(void* str_buf) {
+    return static_cast<const char*>(str_buf);
+  }
+
   // uint64_vec
   void* create_uint64_vec() {
     auto vec = new(std::nothrow) std::vector<uint64_t>;
@@ -206,7 +215,7 @@ export uint64_t scalar_to_uint64(BlsctScalar* blsct_scalar);
 
 export BlsctPubKey* gen_random_public_key();
 
-export BlsctDoublePubKey* gen_double_pub_key(
+export BlsctRetVal* gen_double_pub_key(
   const BlsctPubKey* pk1,
   const BlsctPubKey* pk2
 );
@@ -264,4 +273,4 @@ export void dispose_scalar(BlsctScalar* x);
 export void dispose_point(BlsctPoint* x);
 export void dispose_token_id(BlsctTokenId* x);
 export void dispose_public_key(BlsctPubKey* x);
-export void dispose_double_pub_key(BlsctDoublePubKey* x);
+export void dispose_double_pub_key(void* x);
