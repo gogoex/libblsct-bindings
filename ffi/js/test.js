@@ -1,73 +1,48 @@
 const api = require('./dist/api')
 const {
-  AddressUtil,
-  DoublePublicKey,
-  Point,
-  PublicKey,
-  Scalar,
-  TokenId,
+  Computation,
 } = api
 const blsct = require('./build/Release/blsct')
 
-blsct.init()
+const C = new Computation()
 
 // scalar
-const scalar = new Scalar(1234)
+const scalar = C.getScalar(1234)
 console.log(scalar.toNumber())
-scalar.dispose()
 
 // point
-const point = new Point()
-point.dispose()
+const point = C.getPoint()
 
 // pubkey, dpk
-const pk1 = new PublicKey()
-const pk2 = new PublicKey()
-const dpk = DoublePublicKey.fromTwoPublicKeys(pk1, pk2)
-
-pk1.dispose()
-pk2.dispose()
-dpk.dispose()
+const pk1 = C.getPublicKey()
+const pk2 = C.getPublicKey()
+const dpk = C.getDoublcPublicKeyfromPubKeys(pk1, pk2)
 
 // decode address
 {
   const enc_addr1 = "nv1jlca8fe3jltegf54vwxyl2dvplpk3rz0ja6tjpdpfcar79cm43vxc40g8luh5xh0lva0qzkmytrthftje04fqnt8g6yq3j8t2z552ryhy8dnpyfgqyj58ypdptp43f32u28htwu0r37y9su6332jn0c0fcvan8l53m"
-  const dpk = AddressUtil.decode(enc_addr1)
-
-  const enc_addr2 = AddressUtil.encode(dpk)
-  dpk.dispose()
+  const dpk = C.decodeAddress(enc_addr1)
+  const enc_addr2 = C.encodeAddress(dpk)
   console.log(`recovered enc addr ${enc_addr2}`)
 }
 
 // encode address
 {
-  const pk1 = new PublicKey()
-  const pk2 = new PublicKey()
-  const dpk = DoublePublicKey.fromTwoPublicKeys(pk1, pk2)
-
-  const enc_addr = AddressUtil.encode(dpk)
+  const pk1 = C.getPublicKey()
+  const pk2 = C.getPublicKey()
+  const dpk = C.getDoublcPublicKeyfromPubKeys(pk1, pk2)
+  const enc_addr = C.encodeAddress(dpk)
   console.log(`recovered enc addr: ${enc_addr}`)
-
-  pk1.dispose()
-  pk2.dispose()
-  dpk.dispose()
 }
 
 // token id
 {
-  {
-    const token_id = new TokenId()
-    token_id.dispose()
-  }
-  {
-    const token_id = new TokenId(2323)
-    token_id.dispose()
-  }
-  {
-    const token_id = new TokenId(23, 45)
-    token_id.dispose()
-  }
+    const token_id1 = C.getTokenId()
+    const token_id2 = C.getTokenId(2323)
+    const token_id3 = C.getTokenId(23, 45)
 }
+
+C.cleanUp()
 
 // range proof
 for(let i=0; i<1; ++i) {
@@ -89,9 +64,9 @@ for(let i=0; i<1; ++i) {
       token_id
     )
     blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-    blsct.dispose_ret_val(build_rv) // range proof object has to be freed after it is added to vector
-    blsct.dispose_point(nonce)
-    blsct.dispose_token_id(token_id)
+    blsct.free_obj(build_rv) // range proof object has to be freed after it is added to vector
+    blsct.free_obj(nonce)
+    blsct.free_obj(token_id)
     blsct.dispose_uint64_vec(vs)
   }
   {
@@ -107,7 +82,7 @@ for(let i=0; i<1; ++i) {
       token_id
     )
     blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-    blsct.dispose_token_id(token_id)
+    blsct.free_obj(token_id)
     blsct.dispose_uint64_vec(vs)
 
     // recover amount
@@ -126,10 +101,9 @@ for(let i=0; i<1; ++i) {
       const amount = blsct.get_amount_recovery_result_amount(res.value, i)
       console.log(`recovery res[${i}] -> ${msg}:${amount}`)
     }
-    blsct.dispose_amounts_ret_val(res)
-
-    blsct.dispose_ret_val(build_rv)
-    blsct.dispose_point(nonce)
+    blsct.free_amounts_ret_val(res)
+    blsct.free_obj(build_rv)
+    blsct.free_obj(nonce)
   }
 
   const veri_rv = blsct.verify_range_proofs(rp_vec)

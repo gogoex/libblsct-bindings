@@ -265,12 +265,6 @@ export BlsctAmountsRetVal* recover_amount(
     void* vp_amt_recovery_req_vec
 );
 
-export void dispose_ret_val(BlsctRetVal* rv);
-export void dispose_bool_ret_val(BlsctBoolRetVal* rv);
-export void dispose_amounts_ret_val(BlsctAmountsRetVal* rv);
+export void free_obj(void* rv);
+export void free_amounts_ret_val(BlsctAmountsRetVal* rv);
 
-export void dispose_scalar(BlsctScalar* x);
-export void dispose_point(BlsctPoint* x);
-export void dispose_token_id(BlsctTokenId* x);
-export void dispose_public_key(BlsctPubKey* x);
-export void dispose_double_pub_key(void* x);
