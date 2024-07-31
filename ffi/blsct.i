@@ -23,11 +23,6 @@ if (p == nullptr) { \
   return; \
 }
 
-  void nullify_ret_val_value(void* blsct_ret_val) {
-    auto rv = static_cast<BlsctRetVal*>(blsct_ret_val);
-    rv->value = nullptr;
-  }
-
   const char* as_string(void* str_buf) {
     return static_cast<const char*>(str_buf);
   }
@@ -39,7 +34,7 @@ if (p == nullptr) { \
     return static_cast<void*>(vec);
   }
 
-  void dispose_uint64_vec(void* vp_vec) {
+  void free_uint64_vec(void* vp_vec) {
     if (vp_vec == nullptr) return;
     auto vec = static_cast<const std::vector<uint64_t>*>(vp_vec);
     delete vec;
@@ -85,7 +80,7 @@ if (p == nullptr) { \
     range_proofs->push_back(std::move(range_proof));
   }
 
-  void dispose_range_proof_vec(const void* vp_range_proofs) {
+  void free_range_proof_vec(const void* vp_range_proofs) {
     if (vp_range_proofs == nullptr) return;
     auto range_proofs = static_cast<const std::vector<bulletproofs::RangeProof<Mcl>>*>(vp_range_proofs);
     delete range_proofs; 
@@ -111,7 +106,7 @@ if (p == nullptr) { \
     tx_ins->push_back(*tx_in);
   }
 
-  void dispose_tx_in_vec(const void* vp_tx_ins) {
+  void free_tx_in_vec(const void* vp_tx_ins) {
     auto tx_ins = static_cast<const std::vector<BlsctTxIn>*>(vp_tx_ins);
     delete tx_ins; 
   }
@@ -135,6 +130,13 @@ if (p == nullptr) { \
     vec->push_back(*req);
   }
 
+  void free_amount_recovery_req_vec(void* vp_amt_recovery_req_vec) {
+    RETURN_IF_NULL(vp_amt_recovery_req_vec);
+    auto vec = static_cast<const std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
+    delete vec;
+  }
+
+  // functions to retrieve attrs of amount recovery result 
   size_t get_amount_recovery_result_size(
     void* vp_amt_recovery_req_vec
   ) {
@@ -145,15 +147,15 @@ if (p == nullptr) { \
     return vec->size();
   }
 
-  const char* get_amount_recovery_result_msg(
+  bool get_amount_recovery_result_is_succ(
     void* vp_amt_recovery_req_vec,
     size_t idx
   ) {
-    RETURN_RET_VAL_IF_NULL(vp_amt_recovery_req_vec, nullptr);
+    RETURN_RET_VAL_IF_NULL(vp_amt_recovery_req_vec, 0);
 
     auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
     
-    return vec->at(idx).msg;
+    return vec->at(idx).is_succ;
   }
 
   uint64_t get_amount_recovery_result_amount(
@@ -167,10 +169,15 @@ if (p == nullptr) { \
     return vec->at(idx).amount;
   }
 
-  void dispose_amount_recovery_req_vec(void* vp_amt_recovery_req_vec) {
-    RETURN_IF_NULL(vp_amt_recovery_req_vec);
-    auto vec = static_cast<const std::vector<BlsctAmountRecoveryReq>*>(vp_amt_recovery_req_vec);
-    delete vec;
+  const char* get_amount_recovery_result_msg(
+    void* vp_amt_recovery_req_vec,
+    size_t idx
+  ) {
+    RETURN_RET_VAL_IF_NULL(vp_amt_recovery_req_vec, nullptr);
+
+    auto vec = static_cast<std::vector<BlsctAmountRecoveryResult>*>(vp_amt_recovery_req_vec);
+    
+    return vec->at(idx).msg;
   }
 %}
 

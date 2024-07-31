@@ -131,6 +131,45 @@ export class AddressUtil {
   }
 }
 
+export class RangeProof extends DisposableObj {
+  constructor(rangeProof: any) {
+    super()
+    this.obj = rangeProof
+  }
+}
+
+// not responsible for feeing given parameters
+export class AmtRecoveryReq {
+  rangeProof: RangeProof
+  nonce: Point
+
+  constructor(
+    rangeProof: RangeProof,
+    nonce: Point,
+  ) {
+    this.rangeProof = rangeProof
+    this.nonce = nonce
+  }
+}
+
+export class AmtRecoveryRes {
+  is_succ: boolean
+  message: string
+  amount: number
+
+  constructor(
+    is_succ: boolean,
+    amount: number,
+    message: string,
+  ) {
+    this.is_succ = is_succ
+    this.amount = amount
+    this.message = message
+  }
+  
+  toString = (): string => `${this.is_succ}:${this.amount}:${this.message}`
+}
+
 export type AddressEncoding = 'Bech32' | 'Bech32M'
 
 export class Computation {
@@ -140,25 +179,25 @@ export class Computation {
     this.gc.push(x.get())  
   }
 
-  getScalar = (n: number): any => {
+  Scalar = (n: number): any => {
     const x = new Scalar(n)
     this.add2GC(x)
     return x
   }
 
-  getPoint = (): any => {
+  Point = (): any => {
     const x = new Point()
     this.add2GC(x)
     return x
   }
 
-  getPublicKey = (): any => {
+  PublicKey = (): any => {
     const x = new PublicKey()
     this.add2GC(x)
     return x
   }
 
-  getTokenId = (
+  TokenId = (
     token: number | undefined = undefined,
     subid: number | undefined = undefined
   ): any => {
@@ -167,7 +206,7 @@ export class Computation {
     return x
   }
 
-  getDoublcPublicKeyfromPubKeys = (
+  DoublcPublicKeyfromPubKeys = (
     pk1: PublicKey,
     pk2: PublicKey
   ): DoublePublicKey => {
@@ -176,7 +215,7 @@ export class Computation {
     return x
   }
 
-  getDoublcPublicKeyFromBlsctDPK = (
+  DoublcPublicKeyFromBlsctDPK = (
     blsct_dpk: any
   ): DoublePublicKey => {
     const x = DoublePublicKey.fromBlsctDoublePublicKey(blsct_dpk)
@@ -202,11 +241,111 @@ export class Computation {
     return encodedAddr
   }
 
-  cleanUp = () => {
+  runGC = () => {
     for(let x of this.gc) {
       blsct.free_obj(x)
     }
     this.gc = []
+  }
+
+  buildRangeProof(
+    vs: number[],
+    nonce: Point,
+    message: string,
+    tokenId: TokenId | undefined = undefined,
+  ): RangeProof {
+    const vsVec = blsct.create_uint64_vec()
+    for(let v of vs) {
+      blsct.add_to_uint64_vec(vsVec, v)
+    }
+
+    let paramTokenId = tokenId
+    if (paramTokenId === undefined) {
+      paramTokenId = new TokenId()
+    }
+    let rv = blsct.build_range_proof(
+      vsVec,
+      nonce.get(),
+      message,
+      paramTokenId.get(),
+    )
+
+    // if locally generated tokenId was used, free it
+    if (tokenId === undefined) {
+      blsct.free_obj(paramTokenId.get())
+    }
+    blsct.free_uint64_vec(vsVec)
+    
+    if (rv.result !== 0) {
+      blsct.free_obj(rv)
+      throw new Error(`Building range proof failed: ${rv.result}`)
+    }
+    const rangeProof = new RangeProof(rv.value)
+    blsct.free_obj(rv)
+ 
+    // the builder of range proof is responsible for freeing it
+    this.add2GC(rangeProof)
+
+    return rangeProof
+  }
+
+  verifyRangeProof(
+    proofs: RangeProof[],
+  ): boolean {
+    const vec = blsct.create_range_proof_vec()
+    for(const proof of proofs) {
+      blsct.add_range_proof_to_vec(vec, proof.get())
+    }
+    
+    const rv = blsct.verify_range_proofs(vec)
+    if (rv.result !== 0) {
+      blsct.free_obj(rv)
+      throw new Error(`Verifying range proofs failed: ${rv.result}`)
+    }
+    // the verifier of range proofs is not responsible for freeing the proofs
+    blsct.free_range_proof_vec(vec)
+
+    const res = rv.value
+    blsct.free_obj(rv)
+    return res
+  }
+
+  recoverAmount(reqs: AmtRecoveryReq[]): AmtRecoveryRes[] {
+    const reqVec = blsct.create_amount_recovery_req_vec()
+
+    for(const req of reqs) {
+      const req_ = blsct.gen_recover_amount_req(
+        req.rangeProof.get(),
+        req.nonce.get(),
+      )
+      blsct.add_to_amount_recovery_req_vec(reqVec, req_)
+    }
+
+    const rv = blsct.recover_amount(reqVec)
+    blsct.free_amount_recovery_req_vec(reqVec)
+
+    if (rv.result !== 0) {
+      blsct.free_amounts_ret_val(rv)
+      throw new Error(`Recovering amount failed: ${rv.result}`)
+    }
+ 
+    const res = []
+    const size = blsct.get_amount_recovery_result_size(rv.value)
+
+    for(let i=0; i<size; ++i) {
+      const is_succ = blsct.get_amount_recovery_result_is_succ(rv.value, i)
+      const amount = blsct.get_amount_recovery_result_amount(rv.value, i)
+      const message = blsct.get_amount_recovery_result_msg(rv.value, i)
+      const x = new AmtRecoveryRes(
+        is_succ, 
+        amount,
+        message,
+      )
+      res.push(x)
+    }
+    blsct.free_amounts_ret_val(rv)
+
+    return res
   }
 }
 

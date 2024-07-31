@@ -1,5 +1,6 @@
 const api = require('./dist/api')
 const {
+  AmtRecoveryReq,
   Computation,
 } = api
 const blsct = require('./build/Release/blsct')
@@ -7,16 +8,16 @@ const blsct = require('./build/Release/blsct')
 const C = new Computation()
 
 // scalar
-const scalar = C.getScalar(1234)
+const scalar = C.Scalar(1234)
 console.log(scalar.toNumber())
 
 // point
-const point = C.getPoint()
+const point = C.Point()
 
 // pubkey, dpk
-const pk1 = C.getPublicKey()
-const pk2 = C.getPublicKey()
-const dpk = C.getDoublcPublicKeyfromPubKeys(pk1, pk2)
+const pk1 = C.PublicKey()
+const pk2 = C.PublicKey()
+const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
 
 // decode address
 {
@@ -28,91 +29,56 @@ const dpk = C.getDoublcPublicKeyfromPubKeys(pk1, pk2)
 
 // encode address
 {
-  const pk1 = C.getPublicKey()
-  const pk2 = C.getPublicKey()
-  const dpk = C.getDoublcPublicKeyfromPubKeys(pk1, pk2)
+  const pk1 = C.PublicKey()
+  const pk2 = C.PublicKey()
+  const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
   const enc_addr = C.encodeAddress(dpk)
   console.log(`recovered enc addr: ${enc_addr}`)
 }
 
 // token id
 {
-    const token_id1 = C.getTokenId()
-    const token_id2 = C.getTokenId(2323)
-    const token_id3 = C.getTokenId(23, 45)
+    const token_id1 = C.TokenId()
+    const token_id2 = C.TokenId(2323)
+    const token_id3 = C.TokenId(23, 45)
 }
-
-C.cleanUp()
 
 // range proof
 for(let i=0; i<1; ++i) {
   process.stdout.write('.')
-  const rp_vec = blsct.create_range_proof_vec()
-  {
-    const vs = blsct.create_uint64_vec()
-    blsct.add_to_uint64_vec(vs, 123)
-    blsct.add_to_uint64_vec(vs, 234)
-    blsct.add_to_uint64_vec(vs, 345)
-    blsct.add_to_uint64_vec(vs, 567)
-    const msg = 'navcoin'
-    let nonce = blsct.gen_random_point()
-    let token_id = blsct.gen_default_token_id()
-    let build_rv = blsct.build_range_proof(
-      vs,
-      nonce,
-      msg,
-      token_id
-    )
-    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-    blsct.free_obj(build_rv) // range proof object has to be freed after it is added to vector
-    blsct.free_obj(nonce)
-    blsct.free_obj(token_id)
-    blsct.dispose_uint64_vec(vs)
-  }
-  {
-    const vs = blsct.create_uint64_vec()
-    blsct.add_to_uint64_vec(vs, 456)
-    const nonce = blsct.gen_random_point()
-    const msg = 'navio'
-    const token_id = blsct.gen_default_token_id()
-    const build_rv = blsct.build_range_proof(
-      vs,
-      nonce,
-      msg,
-      token_id
-    )
-    blsct.add_range_proof_to_vec(rp_vec, build_rv.value)
-    blsct.free_obj(token_id)
-    blsct.dispose_uint64_vec(vs)
 
-    // recover amount
-    const reqs = blsct.create_amount_recovery_req_vec()
-    const req = blsct.gen_recover_amount_req(
-      build_rv.value,
-      nonce
-    )
-    blsct.add_to_amount_recovery_req_vec(reqs, req)
-    const res = blsct.recover_amount(reqs)
+  // prove
+  const nonce1 = C.Point()
+  const rp1 = C.buildRangeProof(
+    [456],
+    nonce1,
+    'navcoin'
+  )
+  const nonce2 = C.Point()
+  const rp2 = C.buildRangeProof(
+    [123, 234, 345, 456],
+    nonce2,
+    'navio'
+  )
 
-    const res_size = blsct.get_amount_recovery_result_size(res.value)
-    console.log(`recovery res size = ${res_size}`)
-    for(let i=0; i<res_size; ++i) {
-      const msg = blsct.get_amount_recovery_result_msg(res.value, i)
-      const amount = blsct.get_amount_recovery_result_amount(res.value, i)
-      console.log(`recovery res[${i}] -> ${msg}:${amount}`)
-    }
-    blsct.free_amounts_ret_val(res)
-    blsct.free_obj(build_rv)
-    blsct.free_obj(nonce)
+  // verify
+  const veriRes = C.verifyRangeProof([rp1, rp2])
+  if (!veriRes) {
+    console.log(`Range proof verification failed at i=${i}`)
+    break
   }
 
-  const veri_rv = blsct.verify_range_proofs(rp_vec)
-  if (!veri_rv.value) {
-    console.log(`FAILED!!! in the ${i+1}-th try`)
-    process.exit(1)
-  }
-  blsct.dispose_range_proof_vec(rp_vec)
+  // amount recovery
+  const reqs = [
+    new AmtRecoveryReq(rp1, nonce1),
+    new AmtRecoveryReq(rp2, nonce2),
+  ]
+  const res = C.recoverAmount(reqs)
+  console.log(`Recovery result ${res}`)
 }
+
+C.runGC()
+
 
 // tx
 {
