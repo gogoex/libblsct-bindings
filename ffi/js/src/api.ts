@@ -138,6 +138,66 @@ export class RangeProof extends DisposableObj {
   }
 }
 
+export class OutPoint extends DisposableObj {
+  constructor(txId: string, outIndex: number) {
+    super()
+    this.obj = blsct.gen_out_point(txId, outIndex)
+  }
+}
+
+export class TxIn extends DisposableObj {
+  constructor(
+    amount: number,
+    gamma: number,
+    spendingKey: Scalar,
+    tokenId: TokenId,
+    outPoint: OutPoint,
+    rbf: boolean = false,
+  ) {
+    super()
+    this.obj = blsct.build_tx_in(
+      amount,
+      gamma,
+      spendingKey.get(),
+      tokenId.get(),
+      outPoint.get(),
+      rbf,
+    )
+  }
+}
+
+export class SubAddress extends DisposableObj {
+  constructor(dpk: DoublePublicKey) {
+    super()
+    this.obj = blsct.dpk_to_sub_addr(dpk.get())
+  }
+}
+
+export type TxOutputType = 'Normal' | 'StakedCommitment'
+
+export class TxOut extends DisposableObj {
+  constructor(
+    subAddr: SubAddress,
+    amount: number,
+    memo: string,
+    tokenId: TokenId | undefined = undefined,
+    outputType: TxOutputType = 'Normal',
+    minStake: number = 0,
+  ) {
+    super()
+    const paramTokenId = tokenId === undefined ? new TokenId() : tokenId
+
+    this.obj = blsct.build_tx_out(
+      subAddr.get(),
+      amount,
+      memo,
+      paramTokenId.get(),
+      outputType === 'Normal' ? blsct.Normal : blsct.StakedCommitment,
+      minStake,
+    )
+  }
+}
+
 // not responsible for feeing given parameters
 export class AmtRecoveryReq {
   rangeProof: RangeProof
@@ -223,6 +283,70 @@ export class Computation {
     return x
   }
 
+  OutPoint = (
+    txId: string,
+    outIndex: number,
+  ): OutPoint => {
+    const x = new OutPoint(txId, outIndex)
+    this.add2GC(x)
+    return x
+  }
+
+  TxIn = (
+    amount: number,
+    gamma: number,
+    spendingKey: Scalar,
+    tokenId: TokenId,
+    outPoint: OutPoint,
+    rbf: boolean = false,
+  ): TxIn => {
+    const x = new TxIn(
+      amount,
+      gamma,
+      spendingKey,
+      tokenId,
+      outPoint,
+      rbf
+    )
+    this.add2GC(x)
+    return x
+  }
+
+  TxOut = (
+    subAddr: SubAddress,
+    amount: number,
+    memo: string,
+    tokenId: TokenId | undefined = undefined,
+    outputType: TxOutputType = 'Normal',
+    minStake: number = 0,
+  ): TxOut => {
+    const x = new TxOut(
+      subAddr,
+      amount,
+      memo,
+      tokenId,
+      outputType,
+      minStake,
+    )
+    this.add2GC(x)
+    return x
+  }
+
+  SubAddress = (dpk: DoublePublicKey) => {
+    const x = new SubAddress(dpk)
+    this.add2GC(x)
+    return x
+  }
+
+  runGC = () => {
+    for(let x of this.gc) {
+      blsct.free_obj(x)
+    }
+    this.gc = []
+  }
+
+  ///
+
   decodeAddress = (
     encodedAddr: string,
   ): DoublePublicKey => {
@@ -241,19 +365,12 @@ export class Computation {
     return encodedAddr
   }
 
-  runGC = () => {
-    for(let x of this.gc) {
-      blsct.free_obj(x)
-    }
-    this.gc = []
-  }
-
-  buildRangeProof(
+  buildRangeProof = (
     vs: number[],
     nonce: Point,
     message: string,
     tokenId: TokenId | undefined = undefined,
-  ): RangeProof {
+  ): RangeProof => {
     const vsVec = blsct.create_uint64_vec()
     for(let v of vs) {
       blsct.add_to_uint64_vec(vsVec, v)
@@ -289,9 +406,9 @@ export class Computation {
     return rangeProof
   }
 
-  verifyRangeProof(
+  verifyRangeProof = (
     proofs: RangeProof[],
-  ): boolean {
+  ): boolean => {
     const vec = blsct.create_range_proof_vec()
     for(const proof of proofs) {
       blsct.add_range_proof_to_vec(vec, proof.get())
@@ -310,7 +427,9 @@ export class Computation {
     return res
   }
 
-  recoverAmount(reqs: AmtRecoveryReq[]): AmtRecoveryRes[] {
+  recoverAmount = (
+    reqs: AmtRecoveryReq[],
+  ): AmtRecoveryRes[] => {
     const reqVec = blsct.create_amount_recovery_req_vec()
 
     for(const req of reqs) {

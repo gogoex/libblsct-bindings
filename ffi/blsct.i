@@ -195,6 +195,11 @@ export enum AddressEncoding {
     Bech32M
 };
 
+export enum TxOutputType {
+    Normal,
+    StakedCommitment
+};
+
 typedef struct {
   BLSCT_RESULT result;
   void* value;
@@ -213,6 +218,11 @@ typedef struct {
 export void init();
 export bool set_chain(enum Chain chain);
 
+// freeing allocated memory
+export void free_obj(void* rv);
+export void free_amounts_ret_val(BlsctAmountsRetVal* rv);
+
+// scalar, point, public key, double public key
 export BlsctScalar* gen_scalar(const uint64_t n);
 export BlsctScalar* gen_random_scalar();
 
@@ -227,6 +237,7 @@ export BlsctRetVal* gen_double_pub_key(
   const BlsctPubKey* pk2
 );
 
+// address
 export BlsctRetVal* decode_address(
   const char* blsct_enc_addr
 );
@@ -236,6 +247,7 @@ export BlsctRetVal* encode_address(
   const enum AddressEncoding encoding
 );
 
+// token id
 export BlsctTokenId* gen_token_id_with_subid(
   const uint64_t token,
   const uint64_t subid
@@ -247,6 +259,7 @@ export BlsctTokenId* gen_token_id(
 
 export BlsctTokenId* gen_default_token_id();
 
+// range proof related
 export BlsctRetVal* build_range_proof(
   const void* vp_int_vec,
   const BlsctPoint* blsct_nonce,
@@ -258,11 +271,6 @@ export BlsctBoolRetVal* verify_range_proofs(
   const void* vp_range_proofs
 );
 
-export BlsctOutPoint* gen_out_point(
-    const char* tx_id_c_str,
-    const uint32_t n
-);
-
 export BlsctAmountRecoveryReq* gen_recover_amount_req(
     const void* vp_blsct_range_proof,
     const void* vp_blsct_nonce
@@ -272,6 +280,30 @@ export BlsctAmountsRetVal* recover_amount(
     void* vp_amt_recovery_req_vec
 );
 
-export void free_obj(void* rv);
-export void free_amounts_ret_val(BlsctAmountsRetVal* rv);
+// tx related
+export BlsctOutPoint* gen_out_point(
+    const char* tx_id_c_str,
+    const uint32_t n
+);
 
+export BlsctTxIn* build_tx_in(
+    const uint64_t amount,
+    const uint64_t gamma,
+    const BlsctScalar* spendingKey,
+    const BlsctTokenId* tokenId,
+    const BlsctOutPoint* outPoint,
+    const bool rbf
+);
+
+export BlsctSubAddr* dpk_to_sub_addr(
+    const void* blsct_dpk
+);
+
+export BlsctRetVal* build_tx_out(
+    const BlsctSubAddr* blsct_dest,
+    const uint64_t amount,
+    const char* in_memo_c_str,
+    const BlsctTokenId* blsct_token_id,
+    const TxOutputType output_type,
+    const uint64_t min_stake
+);

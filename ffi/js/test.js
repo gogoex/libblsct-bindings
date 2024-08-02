@@ -43,6 +43,7 @@ const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
     const token_id3 = C.TokenId(23, 45)
 }
 
+/*
 // range proof
 for(let i=0; i<1; ++i) {
   process.stdout.write('.')
@@ -76,17 +77,45 @@ for(let i=0; i<1; ++i) {
   const res = C.recoverAmount(reqs)
   console.log(`Recovery result ${res}`)
 }
-
-C.runGC()
+*/
 
 
 // tx
 {
-  console.log('in tx test')
-  // const crypto = require('crypto')
-  // 
-  // const txid_buf = crypto.randomBytes(32).toString('hex')
-  // 
-  // console.log(txid_buf);
+  // tx in
+  const crypto = require('crypto')
+  const txId = crypto.randomBytes(32).toString('hex')
+   
+  const amount = 123
+  const gamma = 345
+  const spendingKey = C.Scalar(12)
+  const tokenId = C.TokenId()
+  const outIndex = 0
+  const outPoint = C.OutPoint(txId, outIndex)
+
+  const txIn = C.TxIn(
+    amount,
+    gamma,
+    spendingKey,
+    tokenId,
+    outPoint,
+  )
+
+  // tx out
+  const pk1 = C.PublicKey()
+  const pk2 = C.PublicKey()
+  const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
+  const subAddr = C.SubAddress(dpk)
+
+  const fee = 23
+
+  const txOut = C.TxOut(
+    subAddr,
+    amount - fee,
+    'test txout', 
+  )
 }
+
 console.log('done')
+
+C.runGC()
