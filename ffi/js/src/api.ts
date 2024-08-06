@@ -198,6 +198,26 @@ export class TxOut extends DisposableObj {
   }
 }
 
+export class Tx extends DisposableObj {
+  constructor(
+    txIns: TxIn[],
+    txOuts: TxOut[],
+  ) {
+    super()
+
+    const txInVec = blsct.create_tx_in_vec()
+    for(const txIn of txIns) {
+      blsct.add_tx_in_to_vec(txInVec, txIn)
+    }
+
+    const txOutVec = blsct.create_tx_out_vec()
+    for(const txOut of txOuts) {
+      blsct.add_tx_in_to_vec(txOutVec, txOut)
+    }
+    //this.obj = 
+  }
+}
+
 // not responsible for feeing given parameters
 export class AmtRecoveryReq {
   rangeProof: RangeProof
@@ -327,6 +347,18 @@ export class Computation {
       tokenId,
       outputType,
       minStake,
+    )
+    this.add2GC(x)
+    return x
+  }
+
+  Tx = (
+    txIns: TxIn[],
+    txOuts: TxOut[],
+  ): Tx => {
+    const x = new Tx(
+      txIns,
+      txOuts,
     )
     this.add2GC(x)
     return x

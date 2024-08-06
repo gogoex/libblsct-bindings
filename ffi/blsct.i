@@ -307,3 +307,8 @@ export BlsctRetVal* build_tx_out(
     const TxOutputType output_type,
     const uint64_t min_stake
 );
+
+export BlsctTxRetVal* build_tx(
+    const void* void_tx_ins,
+    const void* void_tx_outs
+);
