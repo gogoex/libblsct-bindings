@@ -43,7 +43,6 @@ const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
     const token_id3 = C.TokenId(23, 45)
 }
 
-/*
 // range proof
 for(let i=0; i<1; ++i) {
   process.stdout.write('.')
@@ -77,24 +76,28 @@ for(let i=0; i<1; ++i) {
   const res = C.recoverAmount(reqs)
   console.log(`Recovery result ${res}`)
 }
-*/
-
 
 // tx
 {
+  const numTxIn = 1
+  const numTxOut = 1
+  const defaultFee = 200000
+  const fee = (numTxIn + numTxOut) * defaultFee
+  const outAmount = 10000
+  const inAmount = fee + outAmount
+
   // tx in
   const crypto = require('crypto')
   const txId = crypto.randomBytes(32).toString('hex')
    
-  const amount = 123
-  const gamma = 345
+  const gamma = 100
   const spendingKey = C.Scalar(12)
   const tokenId = C.TokenId()
   const outIndex = 0
   const outPoint = C.OutPoint(txId, outIndex)
 
   const txIn = C.TxIn(
-    amount,
+    inAmount,
     gamma,
     spendingKey,
     tokenId,
@@ -107,13 +110,18 @@ for(let i=0; i<1; ++i) {
   const dpk = C.DoublcPublicKeyfromPubKeys(pk1, pk2)
   const subAddr = C.SubAddress(dpk)
 
-  const fee = 23
-
   const txOut = C.TxOut(
     subAddr,
-    amount - fee,
-    'test txout', 
+    outAmount,
+    'test-txout', 
   )
+
+  const tx = C.Tx(
+    [txIn],
+    [txOut],
+  )
+
+  console.log(`tx: ${tx}`)
 }
 
 console.log('done')

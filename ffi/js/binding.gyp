@@ -11,6 +11,7 @@
         '../../../lib/libblsct.a',
         '../../../lib/libbls384_256.a',
         '../../../lib/libmcl.a',
+        '../../../lib/libunivalue_blsct.a',
       ],
       'sources': [
         'blsct_wrap.cxx',

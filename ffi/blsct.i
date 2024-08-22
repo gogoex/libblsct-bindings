@@ -23,6 +23,20 @@ if (p == nullptr) { \
   return; \
 }
 
+  // trying to free the returned value results in error
+  // swig seems to be taking care of freeing the allocated memory
+  const char* to_hex(uint8_t* buf, size_t buf_size) {
+    char* s = static_cast<char*>(malloc(2 * buf_size + 1));
+    char* p = s;
+    for (size_t i = 0; i<buf_size; ++i) {
+        sprintf(p, "%02x", buf[i]);
+        p += 2;
+    }
+    *p = '\0';
+
+    return s;
+  } 
+
   const char* as_string(void* str_buf) {
     return static_cast<const char*>(str_buf);
   }
@@ -109,6 +123,31 @@ if (p == nullptr) { \
   void free_tx_in_vec(const void* vp_tx_ins) {
     auto tx_ins = static_cast<const std::vector<BlsctTxIn>*>(vp_tx_ins);
     delete tx_ins; 
+  }
+
+  // tx_out_vec
+  void* create_tx_out_vec() {
+    auto vec = new(std::nothrow) std::vector<BlsctTxOut>;
+    HANDLE_MEM_ALLOC_FAILURE(vec);
+    return static_cast<void*>(vec);
+  }
+
+  void add_tx_out_to_vec(
+    void* vp_tx_outs,
+    void* vp_tx_out
+  ) {
+    RETURN_IF_NULL(vp_tx_outs);
+    RETURN_IF_NULL(vp_tx_out);
+
+    auto tx_outs = static_cast<std::vector<BlsctTxOut>*>(vp_tx_outs);
+    auto tx_out = static_cast<BlsctTxOut*>(vp_tx_out);
+
+    tx_outs->push_back(*tx_out);
+  }
+
+  void free_tx_out_vec(const void* vp_tx_outs) {
+    auto tx_outs = static_cast<const std::vector<BlsctTxOut>*>(vp_tx_outs);
+    delete tx_outs; 
   }
 
   // amount_recovery_req_vec
@@ -214,6 +253,14 @@ typedef struct {
   BLSCT_RESULT result;
   void* value;
 } BlsctAmountsRetVal;
+
+typedef struct {
+  BLSCT_RESULT result;
+  uint8_t* ser_tx;
+  size_t ser_tx_size;
+  size_t in_amount_err_index;
+  size_t out_amount_err_index;
+} BlsctTxRetVal;
 
 export void init();
 export bool set_chain(enum Chain chain);

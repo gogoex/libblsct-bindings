@@ -186,8 +186,7 @@ export class TxOut extends DisposableObj {
   ) {
     super()
     const paramTokenId = tokenId === undefined ? new TokenId() : tokenId
-
-    this.obj = blsct.build_tx_out(
+    const rv = blsct.build_tx_out(
       subAddr.get(),
       amount,
       memo,
@@ -195,10 +194,16 @@ export class TxOut extends DisposableObj {
       outputType === 'Normal' ? blsct.Normal : blsct.StakedCommitment,
       minStake,
     )
+    if (rv.result !== 0) {
+      throw new Error(`Building TxOut failed: ${rv.result}`)
+    }
+    this.obj = rv.value
   }
 }
 
 export class Tx extends DisposableObj {
+  hex: string
+
   constructor(
     txIns: TxIn[],
     txOuts: TxOut[],
@@ -207,15 +212,25 @@ export class Tx extends DisposableObj {
 
     const txInVec = blsct.create_tx_in_vec()
     for(const txIn of txIns) {
-      blsct.add_tx_in_to_vec(txInVec, txIn)
+      blsct.add_tx_in_to_vec(txInVec, txIn.get())
     }
 
     const txOutVec = blsct.create_tx_out_vec()
     for(const txOut of txOuts) {
-      blsct.add_tx_in_to_vec(txOutVec, txOut)
+      blsct.add_tx_out_to_vec(txOutVec, txOut.get())
     }
-    //this.obj = 
+
+    const rv = blsct.build_tx(txInVec, txOutVec)
+
+    if (rv.result !== 0) {
+      throw new Error(`Building Tx failed: ${rv.result}`)
+    }
+
+    this.obj = rv.ser_tx
+    this.hex = blsct.to_hex(rv.ser_tx, rv.ser_tx_size)
   }
+
+  toString = (): string => this.hex
 }
 
 // not responsible for feeing given parameters
@@ -498,5 +513,6 @@ export class Computation {
 
     return res
   }
+
 }
 
