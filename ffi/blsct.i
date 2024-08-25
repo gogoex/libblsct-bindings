@@ -23,6 +23,55 @@ if (p == nullptr) { \
   return; \
 }
 
+  BlsctScalar* cast_to_scalar(void* x) {
+    return static_cast<BlsctScalar*>(x);
+  }
+
+  BlsctPoint* cast_to_point(void* x) {
+    return static_cast<BlsctPoint*>(x);
+  }
+
+  BlsctPubKey* cast_to_pub_key(void* x) {
+    return static_cast<BlsctPubKey*>(x);
+  }
+
+  BlsctTokenId* cast_to_token_id(void* x) {
+    return static_cast<BlsctTokenId*>(x);
+  }
+
+  BlsctDoublePubKey* cast_to_dpk(void* x) {
+    return static_cast<BlsctDoublePubKey*>(x);
+  }
+
+  BlsctRangeProof* cast_to_range_proof(void* x) {
+    return static_cast<BlsctRangeProof*>(x);
+  }
+
+  BlsctOutPoint* cast_to_out_point(void* x) {
+    return static_cast<BlsctOutPoint*>(x);
+  }
+
+  BlsctTxIn* cast_to_tx_in(void* x) {
+    return static_cast<BlsctTxIn*>(x);
+  }
+
+  BlsctSubAddr* cast_to_sub_addr(void* x) {
+    return static_cast<BlsctSubAddr*>(x);
+  }
+
+
+  BlsctTxOut* cast_to_tx_out(void* x) {
+    return static_cast<BlsctTxOut*>(x);
+  }
+
+  CMutableTransaction* cast_to_tx(void* x) {
+    return static_cast<CMutableTransaction*>(x);
+  }
+
+  uint8_t* cast_to_uint8_t_ptr(void* x) {
+    return static_cast<uint8_t*>(x);
+  }
+
   // trying to free the returned value results in error
   // swig seems to be taking care of freeing the allocated memory
   const char* to_hex(uint8_t* buf, size_t buf_size) {
@@ -259,6 +308,7 @@ export enum TxOutputType {
 typedef struct {
   BLSCT_RESULT result;
   void* value;
+  size_t value_size;
 } BlsctRetVal;
 
 typedef struct {
@@ -286,15 +336,16 @@ export bool set_chain(enum Chain chain);
 export void free_obj(void* rv);
 export void free_amounts_ret_val(BlsctAmountsRetVal* rv);
 
-// scalar, point, public key, double public key
-export BlsctScalar* gen_scalar(const uint64_t n);
-export BlsctScalar* gen_random_scalar();
-
-export BlsctPoint* gen_random_point();
-
+// scalar
+export BlsctRetVal* gen_scalar(const uint64_t n);
+export BlsctRetVal* gen_random_scalar();
 export uint64_t scalar_to_uint64(BlsctScalar* blsct_scalar);
 
-export BlsctPubKey* gen_random_public_key();
+// point
+export BlsctRetVal* gen_random_point();
+
+// public key
+export BlsctRetVal* gen_random_public_key();
 
 export BlsctRetVal* gen_double_pub_key(
   const BlsctPubKey* pk1,
@@ -312,16 +363,16 @@ export BlsctRetVal* encode_address(
 );
 
 // token id
-export BlsctTokenId* gen_token_id_with_subid(
+export BlsctRetVal* gen_token_id_with_subid(
   const uint64_t token,
   const uint64_t subid
 );
 
-export BlsctTokenId* gen_token_id(
+export BlsctRetVal* gen_token_id(
   const uint64_t token
 );
 
-export BlsctTokenId* gen_default_token_id();
+export BlsctRetVal* gen_default_token_id();
 
 // range proof related
 export BlsctRetVal* build_range_proof(
@@ -345,12 +396,12 @@ export BlsctAmountsRetVal* recover_amount(
 );
 
 // tx related
-export BlsctOutPoint* gen_out_point(
+export BlsctRetVal* gen_out_point(
     const char* tx_id_c_str,
     const uint32_t n
 );
 
-export BlsctTxIn* build_tx_in(
+export BlsctRetVal* build_tx_in(
     const uint64_t amount,
     const uint64_t gamma,
     const BlsctScalar* spendingKey,
@@ -359,7 +410,7 @@ export BlsctTxIn* build_tx_in(
     const bool rbf
 );
 
-export BlsctSubAddr* dpk_to_sub_addr(
+export BlsctRetVal* dpk_to_sub_addr(
     const void* blsct_dpk
 );
 

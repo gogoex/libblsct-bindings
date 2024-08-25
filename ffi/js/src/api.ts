@@ -2,75 +2,110 @@ const blsct = require('../build/Release/blsct') as any
 
 blsct.init()
 
-class DisposableObj {
-  private obj: any
+abstract class DisposableObj<T extends DisposableObj<any>> {
+  protected obj: any
+  protected objSize: number
 
-  constructor(obj: any) {
+  constructor(obj: any, objSize: number) {
     this.obj = obj
+    this.objSize = objSize
   }
 
-  get(): any {
-    return this.obj
+  abstract get: () => any
+
+  getSize = (): number => this.objSize
+
+  dispose = (): void => blsct.free_obj(this.obj)
+
+  serialize = (): string => blsct.to_hex(this.get(), this.objSize)
+
+  deserialize = (hex: string): T => {
+    const serObj = blsct.hexToMallocedBuf(hex)
+    const serObjSize = hex.length / 2
+    return new (this.constructor as any)(serObj, serObjSize) as T 
   }
 
-  dispose(): void {
-    blsct.free_obj(this.obj)
-  }
+  toString = (): string => this.serialize()
 }
 
-export class Scalar extends DisposableObj {
+export class Scalar extends DisposableObj<Scalar> {
   constructor(n: number) {
-    super(blsct.gen_scalar(n))
+    const rv = blsct.gen_scalar(n)
+    const scalar = blsct.cast_to_scalar(rv.value)
+    super(scalar, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_scalar(this.obj)
   }
 
   toNumber(): number {
     return blsct.scalar_to_uint64(this.get())
   }
-  
 }
 
-export class Point extends DisposableObj {
+export class Point extends DisposableObj<Point> {
   constructor() {
-    super(blsct.gen_random_point())
+    const rv = blsct.gen_random_point()
+    super(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_point(this.obj)
   }
 }
 
-export class PublicKey extends DisposableObj {
+export class PublicKey extends DisposableObj<PublicKey> {
   constructor() {
-    super(blsct.gen_random_public_key())
+    const rv = blsct.gen_random_public_key()
+    const pubKey = blsct.cast_to_pub_key(rv.value)
+    super(pubKey, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_pub_key(this.obj)
   }
 }
 
-export class TokenId extends DisposableObj {
+export class TokenId extends DisposableObj<TokenId> {
   constructor(
     token: number | undefined = undefined,
-    subid: number | undefined = undefined
+    subid: number | undefined = undefined,
   ) {
-    let obj
+    let rv
     if (token === undefined && subid === undefined) {
-      obj = blsct.gen_default_token_id();
+      rv = blsct.gen_default_token_id();
     }
     else if (token !== undefined && subid === undefined) {
-      obj = blsct.gen_token_id(token);
+      rv = blsct.gen_token_id(token);
     }
     else if (token !== undefined && subid !== undefined) {
-      obj = blsct.gen_token_id_with_subid(token, subid) 
+      rv = blsct.gen_token_id_with_subid(token, subid) 
     }
     else {
       throw new Error(`when subid is specified, token needs to be specified`)
     }
-    super(obj)
+    super(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_token_id(this.obj)
   }
 }
 
-export class DoublePublicKey extends DisposableObj {
-  private constructor(obj: any) {
-    super(obj);
+export class DoublePublicKey extends DisposableObj<DoublePublicKey> {
+  private constructor(dpk: any, dpkSize: number) {
+    const typedDpk = blsct.cast_to_dpk(dpk)
+    super(typedDpk, dpkSize);
   }
 
   // the ownership of `blsct_dpk` moves to this instance from the caller
-  static moveBlsctDoublePublicKey(blsct_dpk: any): DoublePublicKey {
-    return new DoublePublicKey(blsct_dpk)
+  static moveBlsctDoublePublicKey(dpk: any, dpkSize: number): DoublePublicKey {
+    return new DoublePublicKey(dpk, dpkSize)
   }
 
   static fromTwoPublicKeys(
@@ -83,9 +118,13 @@ export class DoublePublicKey extends DisposableObj {
     if (rv.result !== 0) {
       throw new Error(`Failed to generate a double public key: ${rv.result}`)
     }
-    const dpk = new DoublePublicKey(rv.value)
+    const dpk = new DoublePublicKey(rv.value, rv.value_size)
     blsct.free_obj(rv)
     return dpk
+  }
+
+  get = (): any => {
+    return blsct.cast_to_dpk(this.obj)
   }
 }
 
@@ -98,7 +137,7 @@ export class AddressUtil {
       throw new Error(`Failed to decode address: ${rv.result}`)
     }
     // rv.value (blsct_dpk) is not disposed since the ownership moves to dpk
-    const dpk = DoublePublicKey.moveBlsctDoublePublicKey(rv.value)
+    const dpk = DoublePublicKey.moveBlsctDoublePublicKey(rv.value, rv.value_size)
     blsct.free_obj(rv)
 
     return dpk 
@@ -125,21 +164,31 @@ export class AddressUtil {
   }
 }
 
-export class RangeProof extends DisposableObj {
-  constructor(rangeProof: any) {
-    super(rangeProof)
+export class RangeProof extends DisposableObj<RangeProof> {
+  constructor(rangeProof: any, rangeProofSize: number) {
+    super(rangeProof, rangeProofSize)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_range_proof(this.obj)
   }
 }
 
-export class OutPoint extends DisposableObj {
+export class OutPoint extends DisposableObj<OutPoint> {
   constructor(txId: string, outIndex: number) {
-    super(blsct.gen_out_point(txId, outIndex))
+    const rv = blsct.gen_out_point(txId, outIndex)
+    super(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_out_point(this.obj)
   }
 }
 
-export class TxIn extends DisposableObj {
-  constructor(obj: any) {
-    super(obj)
+export class TxIn extends DisposableObj<TxIn> {
+  constructor(txIn: any, txInSize: number) {
+    super(txIn, txInSize)
   }
 
   static fromFields = (
@@ -150,7 +199,7 @@ export class TxIn extends DisposableObj {
     outPoint: OutPoint,
     rbf: boolean = false,
   ): TxIn => {
-    const obj = blsct.build_tx_in(
+    const rv = blsct.build_tx_in(
       amount,
       gamma,
       spendingKey.get(),
@@ -158,21 +207,33 @@ export class TxIn extends DisposableObj {
       outPoint.get(),
       rbf,
     )
-    return new TxIn(obj)
+    const txIn = new TxIn(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+    return txIn
+  }
+
+  get = (): any => {
+    return blsct.cast_to_tx_in(this.obj)
   }
 }
 
-export class SubAddress extends DisposableObj {
+export class SubAddress extends DisposableObj<SubAddress> {
   constructor(dpk: DoublePublicKey) {
-    super(blsct.dpk_to_sub_addr(dpk.get()))
+    const rv = blsct.dpk_to_sub_addr(dpk.get())
+    super(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_sub_addr(this.obj)
   }
 }
 
 export type TxOutputType = 'Normal' | 'StakedCommitment'
 
-export class TxOut extends DisposableObj {
-  constructor(obj: any) {
-    super(obj)
+export class TxOut extends DisposableObj<TxOut> {
+  constructor(txOut: any, txOutSize: number) {
+    super(txOut, txOutSize)
   }
 
   static fromFields = (
@@ -195,19 +256,22 @@ export class TxOut extends DisposableObj {
     if (rv.result !== 0) {
       throw new Error(`Building TxOut failed: ${rv.result}`)
     }
-    return new TxOut(rv.value)
+    const txOut = new TxOut(rv.value, rv.value_size)
+    blsct.free_obj(rv)
+    return txOut
+  }
+
+  get = (): any => {
+    return blsct.cast_to_tx_out(this.obj)
   }
 }
 
-export class Tx extends DisposableObj {
-  ser_tx_size: number
-
+export class Tx extends DisposableObj<Tx> {
   constructor(
-    ser_tx: any,
-    ser_tx_size: number,
+    serTx: any,
+    serTxSize: number,
   ) {
-    super(ser_tx)
-    this.ser_tx_size = ser_tx_size
+    super(serTx, serTxSize)
   }
 
   static fromTxInsTxOuts(
@@ -233,7 +297,11 @@ export class Tx extends DisposableObj {
     return new Tx(rv.ser_tx, rv.ser_tx_size)
   }
 
-  serialize = (): string => blsct.to_hex(this.get(), this.ser_tx_size)
+  get = (): any => {
+    return blsct.cast_to_uint8_t_ptr(this.obj)
+  }
+
+  serialize = (): string => blsct.to_hex(this.get(), this.getSize())
 
   deserialize = (hex: string): Tx => {
     const ser_tx = blsct.hexToMallocedBuf(hex)
@@ -242,15 +310,16 @@ export class Tx extends DisposableObj {
   }
 
   getTxIns = (): TxIn[] => {
-    const blsctTx = blsct.deserialize_tx(this.get(), this.ser_tx_size)
+    const blsctTx = blsct.deserialize_tx(this.get(), this.getSize())
     const blsctTxIns = blsct.get_tx_ins(blsctTx)
     const txInsSize = blsct.get_tx_ins_size(blsctTxIns)
     const txIns = []
 
     for(let i=0; i<txInsSize; ++i) {
-      const blsctTxIn = blsct.get_tx_in(blsctTxIns, i)
-      const txIn = new TxIn(blsctTxIn)
+      const rv = blsct.get_tx_in(blsctTxIns, i)
+      const txIn = new TxIn(rv.value, rv.value_size)
       txIns.push(txIn)
+      blsct.free_obj(rv)
     }
     blsct.free_obj(blsctTx)
 
@@ -258,23 +327,22 @@ export class Tx extends DisposableObj {
   }
 
   getTxOuts = (): TxOut[] => {
-    const blsctTx = blsct.deserialize_tx(this.get(), this.ser_tx_size)
+    const blsctTx = blsct.deserialize_tx(this.get(), this.getSize())
     const blsctTxOuts = blsct.get_tx_outs(blsctTx)
     const txOutsSize = blsct.get_tx_outs_size(blsctTxOuts)
 
     const txOuts = []
 
     for(let i=0; i<txOutsSize; ++i) {
-      const blsctTxOut = blsct.get_tx_out(blsctTxOuts, i)
-      const txOut = new TxIn(blsctTxOut)
+      const rv = blsct.get_tx_out(blsctTxOuts, i)
+      const txOut = new TxOut(rv.value, rv.value_size)
       txOuts.push(txOut)
+      blsct.free_obj(rv) 
     }
     blsct.free_obj(blsctTx)
 
     return txOuts
   }
-
-  toString = (): string => this.serialize()
 }
 
 // not responsible for feeing given parameters
@@ -314,7 +382,7 @@ export type AddressEncoding = 'Bech32' | 'Bech32M'
 export class Computation {
   private gc: any[] = []
 
-  private add2GC= (x: DisposableObj): void => {
+  private add2GC= (x: DisposableObj<any>): void => {
     this.gc.push(x.get())  
   }
 
@@ -355,9 +423,10 @@ export class Computation {
   }
 
   DoublcPublicKeyFromBlsctDPK = (
-    blsct_dpk: any
+    dpk: any,
+    dpk_size: number,
   ): DoublePublicKey => {
-    const x = DoublePublicKey.moveBlsctDoublePublicKey(blsct_dpk)
+    const x = DoublePublicKey.moveBlsctDoublePublicKey(dpk, dpk_size)
     this.add2GC(x)
     return x
   }
@@ -488,7 +557,7 @@ export class Computation {
       blsct.free_obj(rv)
       throw new Error(`Building range proof failed: ${rv.result}`)
     }
-    const rangeProof = new RangeProof(rv.value)
+    const rangeProof = new RangeProof(rv.value, rv.value_size)
     blsct.free_obj(rv)
  
     // the builder of range proof is responsible for freeing it
