@@ -121,7 +121,17 @@ for(let i=0; i<1; ++i) {
     [txOut],
   )
 
-  console.log(`tx: ${tx}`)
+  const tx_hex = tx.serialize()
+  const tx2 = tx.deserialize(tx_hex)
+
+  const assert = require('assert')
+  assert(tx.serialize() === tx2.serialize())
+
+  const txIns = tx2.getTxIns()
+  console.log(`# of txIns: ${txIns.length}`)
+   
+  const txOuts = tx2.getTxOuts()
+  console.log(`# of txOuts: ${txOuts.length}`)
 }
 
 console.log('done')

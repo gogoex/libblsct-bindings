@@ -3,42 +3,41 @@ const blsct = require('../build/Release/blsct') as any
 blsct.init()
 
 class DisposableObj {
-  protected obj: any = null
+  private obj: any
+
+  constructor(obj: any) {
+    this.obj = obj
+  }
 
   get(): any {
     return this.obj
   }
 
   dispose(): void {
-    if (this.obj !== null) {
-      blsct.free_obj(this.obj)
-    }
+    blsct.free_obj(this.obj)
   }
 }
 
 export class Scalar extends DisposableObj {
   constructor(n: number) {
-    super()
-    this.obj = blsct.gen_scalar(n)
+    super(blsct.gen_scalar(n))
   }
 
   toNumber(): number {
-    return blsct.scalar_to_uint64(this.obj)
+    return blsct.scalar_to_uint64(this.get())
   }
   
 }
 
 export class Point extends DisposableObj {
   constructor() {
-    super()
-    this.obj = blsct.gen_random_point()
+    super(blsct.gen_random_point())
   }
 }
 
 export class PublicKey extends DisposableObj {
   constructor() {
-    super()
-    this.obj = blsct.gen_random_public_key()
+    super(blsct.gen_random_public_key())
   }
 }
 
@@ -47,34 +46,31 @@ export class TokenId extends DisposableObj {
     token: number | undefined = undefined,
     subid: number | undefined = undefined
   ) {
-    super()
-
+    let obj
     if (token === undefined && subid === undefined) {
-      this.obj = blsct.gen_default_token_id();
+      obj = blsct.gen_default_token_id();
     }
     else if (token !== undefined && subid === undefined) {
-      this.obj = blsct.gen_token_id(token);
+      obj = blsct.gen_token_id(token);
     }
     else if (token !== undefined && subid !== undefined) {
-      this.obj = blsct.gen_token_id_with_subid(token, subid) 
+      obj = blsct.gen_token_id_with_subid(token, subid) 
     }
     else {
       throw new Error(`when subid is specified, token needs to be specified`)
     }
+    super(obj)
   }
 }
 
 export class DoublePublicKey extends DisposableObj {
-  private constructor() {
-    super();
+  private constructor(obj: any) {
+    super(obj);
   }
 
-  // this function moves the passed blsct_dpk to this instance
-  // therefore the passed dpk should not be disposed
-  static fromBlsctDoublePublicKey(blsct_dpk: any): DoublePublicKey {
-    const dpk = new DoublePublicKey()
-    dpk.obj = blsct_dpk
-    return dpk
+  // the ownership of `blsct_dpk` moves to this instance from the caller
+  static moveBlsctDoublePublicKey(blsct_dpk: any): DoublePublicKey {
+    return new DoublePublicKey(blsct_dpk)
   }
 
   static fromTwoPublicKeys(
@@ -87,8 +83,7 @@ export class DoublePublicKey extends DisposableObj {
     if (rv.result !== 0) {
       throw new Error(`Failed to generate a double public key: ${rv.result}`)
     }
-    const dpk = new DoublePublicKey()
-    dpk.obj = rv.value
+    const dpk = new DoublePublicKey(rv.value)
     blsct.free_obj(rv)
     return dpk
   }
@@ -102,9 +97,8 @@ export class AddressUtil {
     if (rv.result !== 0) {
       throw new Error(`Failed to decode address: ${rv.result}`)
     }
-    const dpk = DoublePublicKey.fromBlsctDoublePublicKey(rv.value)
-
-    // rv.value (blsct_dpk) is not disposed since it moves to dpk
+    // rv.value (blsct_dpk) is not disposed since the ownership moves to dpk
+    const dpk = DoublePublicKey.moveBlsctDoublePublicKey(rv.value)
     blsct.free_obj(rv)
 
     return dpk 
@@ -133,29 +127,30 @@ export class AddressUtil {
 
 export class RangeProof extends DisposableObj {
   constructor(rangeProof: any) {
-    super()
-    this.obj = rangeProof
+    super(rangeProof)
   }
 }
 
 export class OutPoint extends DisposableObj {
   constructor(txId: string, outIndex: number) {
-    super()
-    this.obj = blsct.gen_out_point(txId, outIndex)
+    super(blsct.gen_out_point(txId, outIndex))
   }
 }
 
 export class TxIn extends DisposableObj {
-  constructor(
+  constructor(obj: any) {
+    super(obj)
+  }
+
+  static fromFields = (
     amount: number,
     gamma: number,
     spendingKey: Scalar,
     tokenId: TokenId,
     outPoint: OutPoint,
     rbf: boolean = false,
-  ) {
-    super()
-    this.obj = blsct.build_tx_in(
+  ): TxIn => {
+    const obj = blsct.build_tx_in(
       amount,
       gamma,
       spendingKey.get(),
@@ -163,28 +158,31 @@ export class TxIn extends DisposableObj {
       outPoint.get(),
       rbf,
     )
+    return new TxIn(obj)
   }
 }
 
 export class SubAddress extends DisposableObj {
   constructor(dpk: DoublePublicKey) {
-    super()
-    this.obj = blsct.dpk_to_sub_addr(dpk.get())
+    super(blsct.dpk_to_sub_addr(dpk.get()))
   }
 }
 
 export type TxOutputType = 'Normal' | 'StakedCommitment'
 
 export class TxOut extends DisposableObj {
-  constructor(
+  constructor(obj: any) {
+    super(obj)
+  }
+
+  static fromFields = (
     subAddr: SubAddress,
     amount: number,
     memo: string,
     tokenId: TokenId | undefined = undefined,
     outputType: TxOutputType = 'Normal',
     minStake: number = 0,
-  ) {
-    super()
+  ): TxOut => {
     const paramTokenId = tokenId === undefined ? new TokenId() : tokenId
     const rv = blsct.build_tx_out(
       subAddr.get(),
@@ -197,19 +195,25 @@ export class TxOut extends DisposableObj {
     if (rv.result !== 0) {
       throw new Error(`Building TxOut failed: ${rv.result}`)
     }
-    this.obj = rv.value
+    return new TxOut(rv.value)
   }
 }
 
 export class Tx extends DisposableObj {
-  hex: string
+  ser_tx_size: number
 
   constructor(
+    ser_tx: any,
+    ser_tx_size: number,
+  ) {
+    super(ser_tx)
+    this.ser_tx_size = ser_tx_size
+  }
+
+  static fromTxInsTxOuts(
     txIns: TxIn[],
     txOuts: TxOut[],
-  ) {
-    super()
-
+  ): Tx {
     const txInVec = blsct.create_tx_in_vec()
     for(const txIn of txIns) {
       blsct.add_tx_in_to_vec(txInVec, txIn.get())
@@ -226,11 +230,51 @@ export class Tx extends DisposableObj {
       throw new Error(`Building Tx failed: ${rv.result}`)
     }
 
-    this.obj = rv.ser_tx
-    this.hex = blsct.to_hex(rv.ser_tx, rv.ser_tx_size)
+    return new Tx(rv.ser_tx, rv.ser_tx_size)
   }
 
-  toString = (): string => this.hex
+  serialize = (): string => blsct.to_hex(this.get(), this.ser_tx_size)
+
+  deserialize = (hex: string): Tx => {
+    const ser_tx = blsct.hexToMallocedBuf(hex)
+    const ser_tx_size = hex.length / 2
+    return new Tx(ser_tx, ser_tx_size)  
+  }
+
+  getTxIns = (): TxIn[] => {
+    const blsctTx = blsct.deserialize_tx(this.get(), this.ser_tx_size)
+    const blsctTxIns = blsct.get_tx_ins(blsctTx)
+    const txInsSize = blsct.get_tx_ins_size(blsctTxIns)
+    const txIns = []
+
+    for(let i=0; i<txInsSize; ++i) {
+      const blsctTxIn = blsct.get_tx_in(blsctTxIns, i)
+      const txIn = new TxIn(blsctTxIn)
+      txIns.push(txIn)
+    }
+    blsct.free_obj(blsctTx)
+
+    return txIns
+  }
+
+  getTxOuts = (): TxOut[] => {
+    const blsctTx = blsct.deserialize_tx(this.get(), this.ser_tx_size)
+    const blsctTxOuts = blsct.get_tx_outs(blsctTx)
+    const txOutsSize = blsct.get_tx_outs_size(blsctTxOuts)
+
+    const txOuts = []
+
+    for(let i=0; i<txOutsSize; ++i) {
+      const blsctTxOut = blsct.get_tx_out(blsctTxOuts, i)
+      const txOut = new TxIn(blsctTxOut)
+      txOuts.push(txOut)
+    }
+    blsct.free_obj(blsctTx)
+
+    return txOuts
+  }
+
+  toString = (): string => this.serialize()
 }
 
 // not responsible for feeing given parameters
@@ -313,7 +357,7 @@ export class Computation {
   DoublcPublicKeyFromBlsctDPK = (
     blsct_dpk: any
   ): DoublePublicKey => {
-    const x = DoublePublicKey.fromBlsctDoublePublicKey(blsct_dpk)
+    const x = DoublePublicKey.moveBlsctDoublePublicKey(blsct_dpk)
     this.add2GC(x)
     return x
   }
@@ -335,7 +379,7 @@ export class Computation {
     outPoint: OutPoint,
     rbf: boolean = false,
   ): TxIn => {
-    const x = new TxIn(
+    const x = TxIn.fromFields(
       amount,
       gamma,
       spendingKey,
@@ -355,7 +399,7 @@ export class Computation {
     outputType: TxOutputType = 'Normal',
     minStake: number = 0,
   ): TxOut => {
-    const x = new TxOut(
+    const x = TxOut.fromFields(
       subAddr,
       amount,
       memo,
@@ -371,7 +415,7 @@ export class Computation {
     txIns: TxIn[],
     txOuts: TxOut[],
   ): Tx => {
-    const x = new Tx(
+    const x = Tx.fromTxInsTxOuts(
       txIns,
       txOuts,
     )

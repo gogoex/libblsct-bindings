@@ -218,6 +218,23 @@ if (p == nullptr) { \
     
     return vec->at(idx).msg;
   }
+
+  uint8_t* hexToMallocedBuf(const char* hex) {
+    size_t buf_len = std::strlen(hex) / 2;
+    uint8_t* buf = static_cast<uint8_t*>(malloc(buf_len));
+
+    const char* p = hex;
+
+    for (size_t i=0; i<buf_len; ++i) {
+      sscanf(p, "%2hhx", &buf[i]);
+      p += 2;
+    }
+    return buf;
+  }
+
+  void** deserializeTxIns(uint8_t* ser_tx, size_t ser_tx_size) {
+    
+  }
 %}
 
 %include "stdint.i"
@@ -359,3 +376,21 @@ export BlsctTxRetVal* build_tx(
     const void* void_tx_ins,
     const void* void_tx_outs
 );
+
+export CMutableTransaction* deserialize_tx(
+    const uint8_t* ser_tx,
+    const size_t ser_tx_size
+);
+
+export const std::vector<CTxIn>* get_tx_ins(const CMutableTransaction* tx);
+
+export const size_t get_tx_ins_size(const std::vector<CTxIn>* tx_ins);
+
+export const CTxIn* get_tx_in(const std::vector<CTxIn>* tx_ins, const size_t i);
+
+export const std::vector<CTxOut>* get_tx_outs(const CMutableTransaction* tx);
+
+export const size_t get_tx_outs_size(const std::vector<CTxOut>* tx_ins);
+
+export const CTxOut* get_tx_out(const std::vector<CTxOut>* tx_ins, const size_t i);
+
