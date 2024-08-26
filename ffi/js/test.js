@@ -1,9 +1,6 @@
-const api = require('./dist/api')
-const {
-  AmtRecoveryReq,
-  Computation,
-} = api
-const blsct = require('./build/Release/blsct')
+const building_blocks = require('./dist/building_blocks.js')
+const { AmtRecoveryReq } = building_blocks
+const { Computation } = require('./dist/computation.js')
 
 const C = new Computation()
 
@@ -132,8 +129,12 @@ for(let i=0; i<1; ++i) {
    
   const txOuts = tx2.getTxOuts()
   console.log(`# of txOuts: ${txOuts.length}`)
+
+  for(const txOut of txOuts) {
+    console.log(`value: ${txOut.getValue()}`)
+  }
 }
 
 console.log('done')
 
-C.runGC()
+//C.runGC()

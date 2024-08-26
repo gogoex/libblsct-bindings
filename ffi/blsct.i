@@ -51,8 +51,8 @@ if (p == nullptr) { \
     return static_cast<BlsctOutPoint*>(x);
   }
 
-  BlsctTxIn* cast_to_tx_in(void* x) {
-    return static_cast<BlsctTxIn*>(x);
+  CTxIn* cast_to_tx_in(void* x) {
+    return static_cast<CTxIn*>(x);
   }
 
   BlsctSubAddr* cast_to_sub_addr(void* x) {
@@ -60,8 +60,8 @@ if (p == nullptr) { \
   }
 
 
-  BlsctTxOut* cast_to_tx_out(void* x) {
-    return static_cast<BlsctTxOut*>(x);
+  CTxOut* cast_to_tx_out(void* x) {
+    return static_cast<CTxOut*>(x);
   }
 
   CMutableTransaction* cast_to_tx(void* x) {
@@ -75,10 +75,11 @@ if (p == nullptr) { \
   // trying to free the returned value results in error
   // swig seems to be taking care of freeing the allocated memory
   const char* to_hex(uint8_t* buf, size_t buf_size) {
-    char* s = static_cast<char*>(malloc(2 * buf_size + 1));
+    size_t dest_buf_size = 2 * buf_size + 1;
+    char* s = static_cast<char*>(malloc(dest_buf_size));
     char* p = s;
     for (size_t i = 0; i<buf_size; ++i) {
-        sprintf(p, "%02x", buf[i]);
+        snprintf(p, dest_buf_size, "%02x", buf[i]);
         p += 2;
     }
     *p = '\0';
@@ -281,9 +282,6 @@ if (p == nullptr) { \
     return buf;
   }
 
-  void** deserializeTxIns(uint8_t* ser_tx, size_t ser_tx_size) {
-    
-  }
 %}
 
 %include "stdint.i"
@@ -435,13 +433,18 @@ export CMutableTransaction* deserialize_tx(
 
 export const std::vector<CTxIn>* get_tx_ins(const CMutableTransaction* tx);
 
-export const size_t get_tx_ins_size(const std::vector<CTxIn>* tx_ins);
+export size_t get_tx_ins_size(const std::vector<CTxIn>* tx_ins);
 
-export const CTxIn* get_tx_in(const std::vector<CTxIn>* tx_ins, const size_t i);
+export const BlsctRetVal* get_tx_in(const std::vector<CTxIn>* tx_ins, const size_t i);
 
 export const std::vector<CTxOut>* get_tx_outs(const CMutableTransaction* tx);
 
-export const size_t get_tx_outs_size(const std::vector<CTxOut>* tx_ins);
+export size_t get_tx_outs_size(const std::vector<CTxOut>* tx_outs);
 
-export const CTxOut* get_tx_out(const std::vector<CTxOut>* tx_ins, const size_t i);
+export const BlsctRetVal* get_tx_out(const std::vector<CTxOut>* tx_outs, const size_t i);
+
+// tx out
+export uint64_t get_tx_out_value(const CTxOut* tx_out);
+
+export const BlsctTokenId* get_tx_out_token_id(const CTxOut* tx_out);
 
