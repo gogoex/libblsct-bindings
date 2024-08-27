@@ -16,7 +16,7 @@ export class Computation {
   }
 
   Scalar = (n: number): any => {
-    return new Scalar(n, this)
+    return Scalar.fromNumber(n, this)
   }
 
   RandomPoint = (): any => {
@@ -267,11 +267,15 @@ abstract class DisposableObj<T extends DisposableObj<any>> {
 }
 
 export class Scalar extends DisposableObj<Scalar> {
-  constructor(n: number, computation: Computation) {
+  constructor(scalar: any, computation: Computation) {
+    super(scalar, blsct.SCALAR_SIZE, computation)
+  }
+
+  static fromNumber(n: number, computation: Computation) {
     const rv = blsct.gen_scalar(n)
-    const scalar = blsct.cast_to_scalar(rv.value)
-    super(scalar, rv.value_size, computation)
+    const scalar = new Scalar(rv.value, computation)
     blsct.free_obj(rv)
+    return scalar
   }
 
   get = (): any => {
@@ -284,13 +288,13 @@ export class Scalar extends DisposableObj<Scalar> {
 }
 
 export class Point extends DisposableObj<Point> {
-  constructor(point: any, pointSize: number, computation: Computation) {
-    super(point, pointSize, computation)
+  constructor(point: any, computation: Computation) {
+    super(point, blsct.POINT_SIZR, computation)
   }
 
   static random = (computation: Computation): Point => {
     const rv = blsct.gen_random_point()
-    const point = new Point(rv.value, rv.value_size, computation)
+    const point = new Point(rv.value, computation)
     blsct.free_obj(rv)
     return point
   }
@@ -580,21 +584,61 @@ export class TxOut extends DisposableObj<TxOut> {
 
   getSpendingKey = (): Point => {
     const key = blsct.get_tx_out_spending_key(this.get())
-    return new Point(key, blsct.POINT_SIZE, this.computation)
+    return new Point(key, this.computation)
   }
 
   getEphemeralKey = (): Point => {
     const key = blsct.get_tx_out_ephemeral_key(this.get())
-    return new Point(key, blsct.POINT_SIZE, this.computation)
+    return new Point(key, this.computation)
   }
 
   getBlindingKey = (): Point => {
     const key = blsct.get_tx_out_blinding_key(this.get())
-    return new Point(key, blsct.POINT_SIZE, this.computation)
+    return new Point(key, this.computation)
   }
 
   getViewTag = (): number => {
     return blsct.get_tx_out_view_tag(this.get())
+  }
+
+  getRangeProof_A = (): Point => {
+    const point = blsct.get_tx_out_range_proof_A(this.get())
+    return new Point(point, this.computation)
+  }
+
+  getRangeProof_S = (): Point => {
+    const point = blsct.get_tx_out_range_proof_S(this.get())
+    return new Point(point, this.computation)
+  }
+
+  getRangeProof_T1 = (): Point => {
+    const point = blsct.get_tx_out_range_proof_T1(this.get())
+    return new Point(point, this.computation)
+  }
+
+  getRangeProof_T2 = (): Point => {
+    const point = blsct.get_tx_out_range_proof_T2(this.get())
+    return new Point(point, this.computation)
+  }
+
+  getRangeProof_mu = (): Scalar => {
+    const scalar = blsct.get_tx_out_range_proof_mu(this.get())
+    return new Scalar(scalar, this.computation)
+  }
+
+  getRangeProof_a = (): Scalar => {
+    const scalar = blsct.get_tx_out_range_proof_a(this.get())
+    return new Scalar(scalar, this.computation)
+  }
+
+  getRangeProof_b = (): Scalar => {
+    const scalar = blsct.get_tx_out_range_proof_b(this.get())
+    return new Scalar(scalar, this.computation)
+  }
+
+  getRangeProof_t_hat = (): Scalar => {
+    const scalar = blsct.get_tx_out_range_proof_t_hat(this.get())
+    return new Scalar(scalar, this.computation)
   }
 }
 
@@ -605,6 +649,11 @@ export class Script extends DisposableObj<Scalar> {
 
   get = (): any => {
     return blsct.cast_to_cscript(this.obj)
+  }
+
+  toHex = (): string => {
+    const buf = blsct.cast_to_uint8_t_ptr(this.get())
+    return blsct.to_hex(buf, blsct.SCRIPT_SIZE)
   }
 }
 

@@ -133,12 +133,21 @@ for(let i=0; i<1; ++i) {
 
   for(const txOut of txOuts) {
     console.log(`value: ${txOut.getValue()}`)
-    console.log(`token_id: token=${txOut.getTokenId().getToken()}, subid=${txOut.getTokenId().getSubid()}`)
+    console.log(`scriptPubKey: ${txOut.getScriptPubKey().toHex()}`)
+    console.log(`tokenId: token=${txOut.getTokenId().getToken()}, subid=${txOut.getTokenId().getSubid()}`)
 
     console.log(`spendingKey: ${txOut.getSpendingKey().toHex()}`)
     console.log(`ephemeralKey: ${txOut.getEphemeralKey().toHex()}`)
     console.log(`blindingKey: ${txOut.getBlindingKey().toHex()}`)
     console.log(`viewTag: ${txOut.getViewTag()}`)
+    console.log(`rangeProof.A: ${txOut.getRangeProof_A().toHex()}`)
+    console.log(`rangeProof.S: ${txOut.getRangeProof_S().toHex()}`)
+    console.log(`rangeProof.T1: ${txOut.getRangeProof_T1().toHex()}`)
+    console.log(`rangeProof.T2: ${txOut.getRangeProof_T2().toHex()}`)
+    console.log(`rangeProof.mu: ${txOut.getRangeProof_mu().toNumber()}`)
+    console.log(`rangeProof.a: ${txOut.getRangeProof_a().toNumber()}`)
+    console.log(`rangeProof.b: ${txOut.getRangeProof_b().toNumber()}`)
+    console.log(`rangeProof.t_hat: ${txOut.getRangeProof_t_hat().toNumber()}`)
   }
 }
 
