@@ -9,68 +9,52 @@ export class Computation {
     blsct.init()
   }
 
-  add2GC = (x: DisposableObj<any>): void => {
-    this.gc.push(x.get())  
-  }
+  add2GC = (x: any): void => {
+    //console.log(`added to GC[${this.gc.length}]`)
+    this.gc.push(x)
 
-  add2GCDirectly = (x: any): void => {
-    this.gc.push(x)  
   }
 
   Scalar = (n: number): any => {
-    const x = new Scalar(n, this)
-    this.add2GC(x)
-    return x
+    return new Scalar(n, this)
   }
 
   Point = (): any => {
-    const x = new Point(this)
-    this.add2GC(x)
-    return x
+    return new Point(this)
   }
 
   PublicKey = (): any => {
-    const x = new PublicKey(this)
-    this.add2GC(x)
-    return x
+    return new PublicKey(this)
   }
 
   TokenId = (
     token: number | undefined = undefined,
     subid: number | undefined = undefined
   ): any => {
-    const x = TokenId.fromTokenSubId(this, token, subid)
-    this.add2GC(x)
-    return x
+    return TokenId.fromTokenSubId(this, token, subid)
   }
 
   DoublcPublicKeyfromPubKeys = (
     pk1: PublicKey,
     pk2: PublicKey
   ): DoublePublicKey => {
-    const x = DoublePublicKey.fromTwoPublicKeys(pk1, pk2, this)
-    this.add2GC(x)
-    return x
+    return DoublePublicKey.fromTwoPublicKeys(pk1, pk2, this)
   }
 
   DoublcPublicKeyFromBlsctDPK = (
     dpk: any,
     dpk_size: number,
   ): DoublePublicKey => {
-    const x = DoublePublicKey.moveBlsctDoublePublicKey(
+    return DoublePublicKey.moveBlsctDoublePublicKey(
       dpk, dpk_size, this
     )
-    this.add2GC(x)
-    return x
   }
 
   OutPoint = (
     txId: string,
     outIndex: number,
   ): OutPoint => {
-    const x = new OutPoint(txId, outIndex, this)
-    this.add2GC(x)
-    return x
+    return new OutPoint(txId, outIndex, this)
   }
 
   TxIn = (
@@ -81,7 +65,7 @@ export class Computation {
     outPoint: OutPoint,
     rbf: boolean = false,
   ): TxIn => {
-    const x = TxIn.fromFields(
+    return TxIn.fromFields(
       amount,
       gamma,
       spendingKey,
@@ -90,8 +74,6 @@ export class Computation {
       rbf,
       this,
     )
-    this.add2GC(x)
-    return x
   }
 
   TxOut = (
@@ -102,7 +84,7 @@ export class Computation {
     outputType: TxOutputType = 'Normal',
     minStake: number = 0,
   ): TxOut => {
-    const x = TxOut.fromFields(
+    return TxOut.fromFields(
       subAddr,
       amount,
       memo,
@@ -111,32 +93,29 @@ export class Computation {
       minStake,
       this,
     )
-    this.add2GC(x)
-    return x
   }
 
   Tx = (
     txIns: TxIn[],
     txOuts: TxOut[],
   ): Tx => {
-    const x = Tx.fromTxInsTxOuts(
+    return Tx.fromTxInsTxOuts(
       txIns,
       txOuts,
       this,
     )
-    this.add2GC(x)
-    return x
   }
 
   SubAddress = (dpk: DoublePublicKey) => {
-    const x = new SubAddress(dpk, this)
-    this.add2GC(x)
-    return x
+    return new SubAddress(dpk, this)
   }
 
   runGC = () => {
+    let i = 0
     for(let x of this.gc) {
       blsct.free_obj(x)
+      //console.log(`freed GC[${i}]`)
+      i++
     }
     this.gc = []
   }
@@ -146,19 +125,16 @@ export class Computation {
   decodeAddress = (
     encodedAddr: string,
   ): DoublePublicKey => {
-    const x = AddressUtil.decode(encodedAddr, this)
-    this.add2GC(x)
-    return x 
+    return AddressUtil.decode(encodedAddr, this)
   }
 
   encodeAddress = (
     dpk: DoublePublicKey,
     encoding: AddressEncoding = 'Bech32M',
   ): string => {
-    const encodedAddr = AddressUtil.encode(
+    return AddressUtil.encode(
       dpk, encoding, this
     )
-    return encodedAddr
   }
 
   buildRangeProof = (
@@ -182,11 +158,6 @@ export class Computation {
       message,
       paramTokenId.get(),
     )
-
-    // if locally generated tokenId was used, free it
-    if (tokenId === undefined) {
-      blsct.free_obj(paramTokenId.get())
-    }
     blsct.free_uint64_vec(vsVec)
     
     if (rv.result !== 0) {
@@ -194,7 +165,6 @@ export class Computation {
       throw new Error(`Building range proof failed: ${rv.result}`)
     }
     const rangeProof = new RangeProof(rv.value, rv.value_size, this)
-    this.add2GC(rangeProof)
     blsct.free_obj(rv)
  
     return rangeProof
@@ -263,7 +233,7 @@ export class Computation {
 }
 
 abstract class DisposableObj<T extends DisposableObj<any>> {
-  protected obj: any
+  protected obj: any = undefined
   protected objSize: number
   protected computation: Computation
 
@@ -271,18 +241,19 @@ abstract class DisposableObj<T extends DisposableObj<any>> {
     this.obj = obj
     this.objSize = objSize
     this.computation = computation
+    computation.add2GC(obj)
   }
 
   abstract get: () => any
 
   getSize = (): number => this.objSize
 
-  // each DisposableObj has ownership of itself,
-  // but not its dependent objets
-  // i.e. it should free memory allocated to this.obj,
-  // but should not free the memory allocated to
-  // the objects that this.obj points to
-  dispose = (): void => blsct.free_obj(this.obj)
+  dispose = (): void => {
+    if (this.obj !== undefined) {
+      blsct.free_obj(this.obj)
+      this.obj = undefined  // avoid accidentally disposing a disposed object
+    }
+  }
 
   serialize = (): string => blsct.to_hex(this.get(), this.objSize)
 
@@ -296,10 +267,10 @@ abstract class DisposableObj<T extends DisposableObj<any>> {
 }
 
 export class Scalar extends DisposableObj<Scalar> {
-  constructor(n: number, compuration: Computation) {
+  constructor(n: number, computation: Computation) {
     const rv = blsct.gen_scalar(n)
     const scalar = blsct.cast_to_scalar(rv.value)
-    super(scalar, rv.value_size, compuration)
+    super(scalar, rv.value_size, computation)
     blsct.free_obj(rv)
   }
 
@@ -365,7 +336,6 @@ export class TokenId extends DisposableObj<TokenId> {
       throw new Error(`when subid is specified, token needs to be specified`)
     }
     const tokenId = new TokenId(rv.value, rv.value_size, computation)
-    computation.add2GC(tokenId)
     blsct.free_obj(rv)
 
     return tokenId
@@ -446,7 +416,7 @@ export class AddressUtil {
     if (rv.result !== 0) {
       throw new Error(`Encoding address failed: ${rv.result}`)
     }
-    computation.add2GCDirectly(rv.value)
+    computation.add2GC(rv.value)
 
     const enc_addr = blsct.as_string(rv.value)
     blsct.free_obj(rv)
@@ -668,7 +638,6 @@ class Tx extends DisposableObj<Tx> {
     const ser_tx = blsct.hexToMallocedBuf(hex)
     const ser_tx_size = hex.length / 2
     const tx = new Tx(ser_tx, ser_tx_size, this.computation)  
-    this.computation.add2GC(tx)
     return tx
   }
 
@@ -682,7 +651,6 @@ class Tx extends DisposableObj<Tx> {
     for(let i=0; i<txInsSize; ++i) {
       const rv = blsct.get_tx_in(blsctTxIns, i)
       const txIn = new TxIn(rv.value, rv.value_size, this.computation)
-      this.computation.add2GC(txIn)
       txIns.push(txIn)
       blsct.free_obj(rv)
     }
@@ -701,7 +669,6 @@ class Tx extends DisposableObj<Tx> {
     for(let i=0; i<txOutsSize; ++i) {
       const rv = blsct.get_tx_out(blsctTxOuts, i)
       const txOut = new TxOut(rv.value, rv.value_size, this.computation)
-      this.computation.add2GC(txOut)
       txOuts.push(txOut)
       blsct.free_obj(rv) 
     }

@@ -46,17 +46,20 @@ for(let i=0; i<1; ++i) {
 
   // prove
   const nonce1 = C.Point()
+  console.log(`----> 1`)
   const rp1 = C.buildRangeProof(
     [456],
     nonce1,
     'navcoin'
   )
+  console.log(`----> 100`)
   const nonce2 = C.Point()
   const rp2 = C.buildRangeProof(
     [123, 234, 345, 456],
     nonce2,
     'navio'
   )
+  console.log(`----> 1000`)
 
   // verify
   const veriRes = C.verifyRangeProof([rp1, rp2])
@@ -137,4 +140,4 @@ for(let i=0; i<1; ++i) {
 
 console.log('done')
 
-//C.runGC()
+C.runGC()
