@@ -1,6 +1,7 @@
-const building_blocks = require('./dist/building_blocks.js')
-const { AmtRecoveryReq } = building_blocks
-const { Computation } = require('./dist/computation.js')
+const {
+  Computation,
+  AmtRecoveryReq,
+} = require('./dist/computation.js')
 
 const C = new Computation()
 
@@ -9,7 +10,7 @@ const scalar = C.Scalar(1234)
 console.log(scalar.toNumber())
 
 // point
-const point = C.Point()
+const point = C.RandomPoint()
 
 // pubkey, dpk
 const pk1 = C.PublicKey()
@@ -45,21 +46,18 @@ for(let i=0; i<1; ++i) {
   process.stdout.write('.')
 
   // prove
-  const nonce1 = C.Point()
-  console.log(`----> 1`)
+  const nonce1 = C.RandomPoint()
   const rp1 = C.buildRangeProof(
     [456],
     nonce1,
     'navcoin'
   )
-  console.log(`----> 100`)
-  const nonce2 = C.Point()
+  const nonce2 = C.RandomPoint()
   const rp2 = C.buildRangeProof(
     [123, 234, 345, 456],
     nonce2,
     'navio'
   )
-  console.log(`----> 1000`)
 
   // verify
   const veriRes = C.verifyRangeProof([rp1, rp2])
@@ -113,7 +111,7 @@ for(let i=0; i<1; ++i) {
   const txOut = C.TxOut(
     subAddr,
     outAmount,
-    'test-txout', 
+    'test-txout' ,
   )
 
   const tx = C.Tx(
@@ -135,6 +133,12 @@ for(let i=0; i<1; ++i) {
 
   for(const txOut of txOuts) {
     console.log(`value: ${txOut.getValue()}`)
+    console.log(`token_id: token=${txOut.getTokenId().getToken()}, subid=${txOut.getTokenId().getSubid()}`)
+
+    console.log(`spendingKey: ${txOut.getSpendingKey().toHex()}`)
+    console.log(`ephemeralKey: ${txOut.getEphemeralKey().toHex()}`)
+    console.log(`blindingKey: ${txOut.getBlindingKey().toHex()}`)
+    console.log(`viewTag: ${txOut.getViewTag()}`)
   }
 }
 

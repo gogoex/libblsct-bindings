@@ -19,8 +19,8 @@ export class Computation {
     return new Scalar(n, this)
   }
 
-  Point = (): any => {
-    return new Point(this)
+  RandomPoint = (): any => {
+    return Point.random(this)
   }
 
   PublicKey = (): any => {
@@ -284,14 +284,24 @@ export class Scalar extends DisposableObj<Scalar> {
 }
 
 export class Point extends DisposableObj<Point> {
-  constructor(compuration: Computation) {
+  constructor(point: any, pointSize: number, computation: Computation) {
+    super(point, pointSize, computation)
+  }
+
+  static random = (computation: Computation): Point => {
     const rv = blsct.gen_random_point()
-    super(rv.value, rv.value_size, compuration)
+    const point = new Point(rv.value, rv.value_size, computation)
     blsct.free_obj(rv)
+    return point
   }
 
   get = (): any => {
     return blsct.cast_to_point(this.obj)
+  }
+
+  toHex = (): string => {
+    const hex = blsct.point_to_hex(this.get())
+    return hex
   }
 }
 
@@ -343,6 +353,14 @@ export class TokenId extends DisposableObj<TokenId> {
 
   get = (): any => {
     return blsct.cast_to_token_id(this.obj)
+  }
+
+  getToken = (): number => {
+    return blsct.get_token_id_token(this.get())
+  }
+
+  getSubid = (): number => {
+    return blsct.get_token_id_subid(this.get())
   }
 }
 
@@ -551,8 +569,42 @@ export class TxOut extends DisposableObj<TxOut> {
   }
 
   getTokenId = (): TokenId => {
-    const tokenId = blsct.get_tx_out_token_id()
+    const tokenId = blsct.get_tx_out_token_id(this.get())
     return new TokenId(tokenId, blsct.TOKEN_ID_SIZE, this.computation)
+  }
+
+  getScriptPubKey = (): Script => {
+    const scriptPubKey = blsct.get_tx_out_script_pubkey(this.get())
+    return new Script(scriptPubKey, blsct.SCRIPT_SIZE, this.computation)
+  }
+
+  getSpendingKey = (): Point => {
+    const key = blsct.get_tx_out_spending_key(this.get())
+    return new Point(key, blsct.POINT_SIZE, this.computation)
+  }
+
+  getEphemeralKey = (): Point => {
+    const key = blsct.get_tx_out_ephemeral_key(this.get())
+    return new Point(key, blsct.POINT_SIZE, this.computation)
+  }
+
+  getBlindingKey = (): Point => {
+    const key = blsct.get_tx_out_blinding_key(this.get())
+    return new Point(key, blsct.POINT_SIZE, this.computation)
+  }
+
+  getViewTag = (): number => {
+    return blsct.get_tx_out_view_tag(this.get())
+  }
+}
+
+export class Script extends DisposableObj<Scalar> {
+  constructor(script: any, scriptSize: number, computation: Computation) {
+    super(script, scriptSize, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_cscript(this.obj)
   }
 }
 

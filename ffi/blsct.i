@@ -72,6 +72,10 @@ if (p == nullptr) { \
     return static_cast<uint8_t*>(x);
   }
 
+  CScript* cast_to_cscript(void* x) {
+    return static_cast<CScript*>(x);
+  }
+
   // trying to free the returned value results in error
   // swig seems to be taking care of freeing the allocated memory
   const char* to_hex(uint8_t* buf, size_t buf_size) {
@@ -341,6 +345,7 @@ export uint64_t scalar_to_uint64(BlsctScalar* blsct_scalar);
 
 // point
 export BlsctRetVal* gen_random_point();
+export const char* point_to_hex(const BlsctPoint* blsct_point);
 
 // public key
 export BlsctRetVal* gen_random_public_key();
@@ -371,6 +376,10 @@ export BlsctRetVal* gen_token_id(
 );
 
 export BlsctRetVal* gen_default_token_id();
+
+export uint64_t get_token_id_token(const BlsctTokenId* blsct_token_id);
+
+export uint64_t get_token_id_subid(const BlsctTokenId* blsct_token_id);
 
 // range proof related
 export BlsctRetVal* build_range_proof(
@@ -448,3 +457,12 @@ export uint64_t get_tx_out_value(const CTxOut* tx_out);
 
 export const BlsctTokenId* get_tx_out_token_id(const CTxOut* tx_out);
 
+export const BlsctScript* get_tx_out_script_pubkey(const CTxOut* tx_out);
+
+export const BlsctPoint* get_tx_out_spending_key(const CTxOut* tx_out);
+
+export const BlsctPoint* get_tx_out_ephemeral_key(const CTxOut* tx_out);
+
+export const BlsctPoint* get_tx_out_blinding_key(const CTxOut* tx_out);
+
+export const uint16_t get_tx_out_view_tag(const CTxOut* tx_out);
