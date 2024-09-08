@@ -131,6 +131,16 @@ for(let i=0; i<1; ++i) {
   const txOuts = tx2.getTxOuts()
   console.log(`# of txOuts: ${txOuts.length}`)
 
+  console.log(`<tx in>`)
+  for(const txIn of txIns) {
+    console.log(`prevOutHash: ${txIn.getPrevOutHash().toHex()}`)
+    console.log(`prevOutN: ${txIn.getPrevOutN()}`)
+    console.log(`sciptSig: ${txIn.getScriptSig().toHex()}`)
+    console.log(`sequence: ${txIn.getSequence()}`)
+    console.log(`sciptWitness: ${txIn.getScriptWitness().toHex()}`)
+  }
+
+  console.log(`<tx out>`)
   for(const txOut of txOuts) {
     console.log(`value: ${txOut.getValue()}`)
     console.log(`scriptPubKey: ${txOut.getScriptPubKey().toHex()}`)

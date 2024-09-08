@@ -5,6 +5,7 @@
 %}
 
 %constant size_t SCRIPT_SIZE = SCRIPT_SIZE;
+%constant size_t TX_ID_SIZE = TX_ID_SIZE;
 
 %inline %{
 #define HANDLE_MEM_ALLOC_FAILURE(name) \
@@ -456,7 +457,18 @@ export const std::vector<CTxOut>* get_tx_outs(const CMutableTransaction* tx);
 
 export size_t get_tx_outs_size(const std::vector<CTxOut>* tx_outs);
 
-export const BlsctRetVal* get_tx_out(const std::vector<CTxOut>* tx_outs, const size_t i);
+export const BlsctRetVal* get_tx_out(const std::vector<CTxOut>* tx_outs, const size_t i);
+
+// tx in
+export const BlsctTxId* get_tx_in_prev_out_hash(const CTxIn* tx_in);
+
+export uint32_t get_tx_in_prev_out_n(const CTxIn* tx_in);
+
+export const BlsctScript* get_tx_in_script_sig(const CTxIn* tx_in);
+
+export uint32_t get_tx_in_sequence(const CTxIn* tx_in);
+
+export const BlsctScript* get_tx_in_script_witness(const CTxIn* tx_in);
 
 // tx out
 export uint64_t get_tx_out_value(const CTxOut* tx_out);
@@ -471,7 +483,7 @@ export const BlsctPoint* get_tx_out_ephemeral_key(const CTxOut* tx_out);
 
 export const BlsctPoint* get_tx_out_blinding_key(const CTxOut* tx_out);
 
-export const uint16_t get_tx_out_view_tag(const CTxOut* tx_out);
+export uint16_t get_tx_out_view_tag(const CTxOut* tx_out);
 
 export const BlsctPoint* get_tx_out_range_proof_A(const CTxOut* tx_out);
 export const BlsctPoint* get_tx_out_range_proof_S(const CTxOut* tx_out);
@@ -482,3 +494,4 @@ export const BlsctScalar* get_tx_out_range_proof_mu(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_a(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_b(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_t_hat(const CTxOut* tx_out);
+

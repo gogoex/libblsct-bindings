@@ -511,6 +511,29 @@ export class TxIn extends DisposableObj<TxIn> {
   get = (): any => {
     return blsct.cast_to_tx_in(this.obj)
   }
+
+  getPrevOutHash = (): TxId => {
+    const txId = blsct.get_tx_in_prev_out_hash(this.get())
+    return new TxId(txId, blsct.TX_ID_SIZE, this.computation)
+  }
+
+  getPrevOutN = (): number => {
+    return blsct.get_tx_in_prev_out_n(this.get())
+  }
+
+  getScriptSig = (): Script => {
+    const scriptSig = blsct.get_tx_in_script_sig(this.get())
+    return new Script(scriptSig, blsct.SCRIPT_SIZE, this.computation)
+  }
+
+  getSequence = (): number => {
+    return blsct.get_tx_in_sequence(this.get())
+  }
+
+  getScriptWitness = (): Script => {
+    const scriptWitness = blsct.get_tx_in_script_witness(this.get())
+    return new Script(scriptWitness, blsct.SCRIPT_SIZE, this.computation)
+  }
 }
 
 export class SubAddress extends DisposableObj<SubAddress> {
@@ -570,11 +593,6 @@ export class TxOut extends DisposableObj<TxOut> {
 
   getValue = (): number => {
     return blsct.get_tx_out_value(this.get())
-  }
-
-  getTokenId = (): TokenId => {
-    const tokenId = blsct.get_tx_out_token_id(this.get())
-    return new TokenId(tokenId, blsct.TOKEN_ID_SIZE, this.computation)
   }
 
   getScriptPubKey = (): Script => {
@@ -640,6 +658,11 @@ export class TxOut extends DisposableObj<TxOut> {
     const scalar = blsct.get_tx_out_range_proof_t_hat(this.get())
     return new Scalar(scalar, this.computation)
   }
+
+  getTokenId = (): TokenId => {
+    const tokenId = blsct.get_tx_out_token_id(this.get())
+    return new TokenId(tokenId, blsct.TOKEN_ID_SIZE, this.computation)
+  }
 }
 
 export class Script extends DisposableObj<Scalar> {
@@ -654,6 +677,21 @@ export class Script extends DisposableObj<Scalar> {
   toHex = (): string => {
     const buf = blsct.cast_to_uint8_t_ptr(this.get())
     return blsct.to_hex(buf, blsct.SCRIPT_SIZE)
+  }
+}
+
+export class TxId extends DisposableObj<Scalar> {
+  constructor(txId: any, txIdSize: number, computation: Computation) {
+    super(txId, txIdSize, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_uint8_t_ptr(this.obj)
+  }
+
+  toHex = (): string => {
+    const buf = blsct.cast_to_uint8_t_ptr(this.get())
+    return blsct.to_hex(buf, blsct.TX_ID_SIZE)
   }
 }
 
@@ -688,8 +726,6 @@ export class AmtRecoveryRes {
   
   toString = (): string => `${this.is_succ}:${this.amount}:${this.message}`
 }
-
-
 
 class Tx extends DisposableObj<Tx> {
   constructor(
