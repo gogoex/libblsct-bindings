@@ -15,16 +15,24 @@ export class Computation {
 
   }
 
-  Scalar = (n: number): any => {
+  RandomScalar = (): Scalar => {
+    return Scalar.random(this)
+  }
+
+  Scalar = (n: number): Scalar => {
     return Scalar.fromNumber(n, this)
   }
 
-  RandomPoint = (): any => {
+  RandomPoint = (): Point => {
     return Point.random(this)
   }
 
-  PublicKey = (): any => {
-    return new PublicKey(this)
+  ScalarToPublicKey = (scalar: Scalar): PublicKey => {
+    return PublicKey.fromScalar(scalar, this)
+  }
+
+  PublicKey = (): PublicKey => {
+    return PublicKey.random(this)
   }
 
   TokenId = (
@@ -137,10 +145,19 @@ export class Computation {
     )
   }
 
+  signMessage = (privKey: Scalar, msg: string) => {
+    const sig = blsct.sign_message(privKey.get(), msg)
+    return new Signature(sig, blsct.SIGNATURE_SIZE, this)
+  }
+
+  verifyMessage = (pubKey: PublicKey, msg: string, sig: Signature): boolean => {
+    return blsct.verify_msg_sig(pubKey.get(), msg, sig.get())
+  }
+
   buildRangeProof = (
     vs: number[],
     nonce: Point,
-    message: string,
+    msg: string,
     tokenId: TokenId | undefined = undefined,
   ): RangeProof => {
     const vsVec = blsct.create_uint64_vec()
@@ -155,7 +172,7 @@ export class Computation {
     let rv = blsct.build_range_proof(
       vsVec,
       nonce.get(),
-      message,
+      msg,
       paramTokenId.get(),
     )
     blsct.free_uint64_vec(vsVec)
@@ -278,6 +295,13 @@ export class Scalar extends DisposableObj<Scalar> {
     return scalar
   }
 
+  static random = (computation: Computation): Scalar => {
+    const rv = blsct.gen_random_scalar()
+    const scalar = new Scalar(rv.value, computation)
+    blsct.free_obj(rv)
+    return scalar
+  }
+
   get = (): any => {
     return blsct.cast_to_scalar(this.obj)
   }
@@ -289,7 +313,7 @@ export class Scalar extends DisposableObj<Scalar> {
 
 export class Point extends DisposableObj<Point> {
   constructor(point: any, computation: Computation) {
-    super(point, blsct.POINT_SIZR, computation)
+    super(point, blsct.POINT_SIZE, computation)
   }
 
   static random = (computation: Computation): Point => {
@@ -310,8 +334,31 @@ export class Point extends DisposableObj<Point> {
 }
 
 export class PublicKey extends DisposableObj<PublicKey> {
-  constructor(compuration: Computation) {
+  constructor(pubKey: any, pubKeySize: number, computation: Computation) {
+    super(pubKey, blsct.PUBLIC_KEY_SIZE, computation);
+  }
+
+  static random = (computation: Computation): PublicKey => {
     const rv = blsct.gen_random_public_key()
+    const pubKey = blsct.cast_to_pub_key(rv.value)
+    const pubKeyObj = new PublicKey(pubKey, rv.value_size, computation)
+    blsct.free_obj(rv)
+    return pubKeyObj
+  }
+
+  static fromScalar = (scalar: Scalar, computation: Computation): PublicKey => {
+    const pubKey = blsct.scalar_to_pub_key(scalar.get())
+    return new PublicKey(pubKey, blsct.PUBLIC_KEY_SIZE, computation)
+  }
+  
+  get = (): any => {
+    return blsct.cast_to_pub_key(this.obj)
+  }
+}
+
+export class PrivateKey extends DisposableObj<PrivateKey> {
+  constructor(compuration: Computation) {
+    const rv = blsct.gen_random_scalar()
     const pubKey = blsct.cast_to_pub_key(rv.value)
     super(pubKey, rv.value_size, compuration)
     blsct.free_obj(rv)
@@ -365,6 +412,20 @@ export class TokenId extends DisposableObj<TokenId> {
 
   getSubid = (): number => {
     return blsct.get_token_id_subid(this.get())
+  }
+}
+
+export class Signature extends DisposableObj<Signature> {
+  constructor(
+    signature: any,
+    signatureSize: number,
+    computation: Computation,
+  ) {
+    super(signature, signatureSize, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_signature(this.obj)
   }
 }
 
@@ -728,7 +789,7 @@ export class AmtRecoveryRes {
 }
 
 class Tx extends DisposableObj<Tx> {
-  constructor(
+  private constructor(
     serTx: any,
     serTxSize: number,
     computation: Computation,

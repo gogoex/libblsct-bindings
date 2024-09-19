@@ -6,6 +6,9 @@
 
 %constant size_t SCRIPT_SIZE = SCRIPT_SIZE;
 %constant size_t TX_ID_SIZE = TX_ID_SIZE;
+%constant size_t SIGNATURE_SIZE = SIGNATURE_SIZE;
+%constant size_t PUBLIC_KEY_SIZE = PUBLIC_KEY_SIZE;
+%constant size_t POINT_SIZE = POINT_SIZE;
 
 %inline %{
 #define HANDLE_MEM_ALLOC_FAILURE(name) \
@@ -42,6 +45,10 @@ if (p == nullptr) { \
     return static_cast<BlsctTokenId*>(x);
   }
 
+  BlsctSignature* cast_to_signature(void* x) {
+    return static_cast<BlsctSignature*>(x);
+  }
+
   BlsctDoublePubKey* cast_to_dpk(void* x) {
     return static_cast<BlsctDoublePubKey*>(x);
   }
@@ -61,7 +68,6 @@ if (p == nullptr) { \
   BlsctSubAddr* cast_to_sub_addr(void* x) {
     return static_cast<BlsctSubAddr*>(x);
   }
-
 
   CTxOut* cast_to_tx_out(void* x) {
     return static_cast<CTxOut*>(x);
@@ -494,4 +500,19 @@ export const BlsctScalar* get_tx_out_range_proof_mu(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_a(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_b(const CTxOut* tx_out);
 export const BlsctScalar* get_tx_out_range_proof_t_hat(const CTxOut* tx_out);
+
+export const BlsctSignature* sign_message(
+    const BlsctScalar* blsct_priv_key,
+    const char* blsct_msg
+);
+
+export bool verify_msg_sig(
+    const BlsctPubKey* blsct_pub_key,
+    const char* blsct_msg,
+    const BlsctSignature* blsct_signature
+);
+
+export BlsctPubKey* scalar_to_pub_key(
+    const BlsctScalar* blsct_scalar
+);
 

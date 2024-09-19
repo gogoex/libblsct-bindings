@@ -3,6 +3,8 @@ const {
   AmtRecoveryReq,
 } = require('./dist/computation.js')
 
+const assert = require('assert')
+
 const C = new Computation()
 
 // scalar
@@ -122,7 +124,6 @@ for(let i=0; i<1; ++i) {
   const tx_hex = tx.serialize()
   const tx2 = tx.deserialize(tx_hex)
 
-  const assert = require('assert')
   assert(tx.serialize() === tx2.serialize())
 
   const txIns = tx2.getTxIns()
@@ -160,6 +161,24 @@ for(let i=0; i<1; ++i) {
     console.log(`rangeProof.t_hat: ${txOut.getRangeProof_t_hat().toNumber()}`)
   }
 }
+
+// signing
+{
+  const privKey = C.RandomScalar()
+  const sig = C.signMessage(privKey, 'apple')
+
+  const pubKey = C.ScalarToPublicKey(privKey)
+
+  const res1 = C.verifyMessage(pubKey, 'apple', sig)
+  assert(res1 === true)
+
+  const res2 = C.verifyMessage(pubKey, 'apple2', sig)
+  assert(res2 === false)
+
+  const res3 = C.verifyMessage(C.ScalarToPublicKey(C.RandomScalar()), 'apple', sig)
+  assert(res3 === false)
+}
+
 
 console.log('done')
 
