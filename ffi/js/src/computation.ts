@@ -35,6 +35,13 @@ export class Computation {
     return PublicKey.random(this)
   }
 
+  SubAddrId = (
+    account: number,
+    address: number,
+  ) => {
+    return SubAddrId.fromAcctAddr(account, address, this)
+  }
+
   TokenId = (
     token: number | undefined = undefined,
     subid: number | undefined = undefined
@@ -57,6 +64,22 @@ export class Computation {
       dpk, dpk_size, this
     )
   }
+
+  DoublcPublicKeyFromViewKeySpendingPubKeyAcctAddr = (
+    viewKey: Scalar,
+    spendingPubKey: PublicKey,
+    account: number,
+    address: number,
+  ): DoublePublicKey => {
+    return DoublePublicKey.fromViewKeySpendingPubKeyAcctAddr(
+      viewKey,
+      spendingPubKey,
+      account,
+      address,
+      this,
+    )
+  }
+
 
   OutPoint = (
     txId: string,
@@ -155,9 +178,73 @@ export class Computation {
     return new Scalar(viewKey, this)
   }
 
-  fromTxKeyToSpendKey = (txKey: Scalar): Scalar => {
-    const spendKey = blsct.from_tx_key_to_spend_key(txKey.get())
-    return new Scalar(spendKey, this)
+  fromTxKeyToSpendingKey = (txKey: Scalar): Scalar => {
+    const spendingKey = blsct.from_tx_key_to_spending_key(txKey.get())
+    return new Scalar(spendingKey, this)
+  }
+
+  calcPrivSpendingKey = (
+    blindingPubKey: PublicKey,
+    viewKey: Scalar,
+    spendingKey: Scalar,
+    account: number,
+    address: number,
+  ): Scalar => {
+    const privSpendingKey = blsct.calc_priv_spending_key(
+      blindingPubKey.get(),
+      viewKey.get(),
+      spendingKey.get(),
+      account,
+      address
+    )
+    return new Scalar(privSpendingKey, this)
+  }
+
+  calcViewTag = (
+    blindingPubKey: PublicKey,
+    viewKey: Scalar,
+  ): number => {
+    return blsct.calc_view_tag(
+      blindingPubKey.get(),
+      viewKey.get(),
+    )
+  }
+
+  calcHashId = (
+    blindingPubKey: PublicKey,
+    spendingPubKey: PublicKey,
+    viewKey: Scalar,
+  ): KeyId => {
+    const hashId = blsct.calc_hash_id(
+      blindingPubKey.get(),
+      spendingPubKey.get(),
+      viewKey.get(),
+    )
+    return new KeyId(hashId, this)
+  }
+
+  calcNonce = (
+    blindingPubKey: PublicKey,
+    viewKey: Scalar,
+  ): PublicKey => {
+    const blsct_nonce = blsct.calc_nonce(
+      blindingPubKey.get(),
+      viewKey.get(),
+    )
+    return new Point(blsct_nonce, this)
+  }
+
+  deriveSubAddr = (
+    viewKey: Scalar,
+    spendingPubKey: PublicKey,
+    subAddrId: SubAddrId,
+  ): SubAddr => {
+    return SubAddr.derive(
+      viewKey,
+      spendingPubKey,
+      subAddrId,
+      this,
+    )
   }
 
   decodeAddress = (
@@ -343,6 +430,10 @@ export class Scalar extends DisposableObj<Scalar> {
   toHex = (): string => {
     return blsct.scalar_to_hex(this.get())
   }
+
+  toPublicKey = (): PublicKey => {
+    return PublicKey.fromScalar(this, this.computation)
+  }
 }
 
 export class Point extends DisposableObj<Point> {
@@ -357,6 +448,10 @@ export class Point extends DisposableObj<Point> {
     return point
   }
 
+  isValid = (): boolean => {
+    return blsct.is_valid_point(this.get())
+  }
+
   get = (): any => {
     return blsct.cast_to_point(this.obj)
   }
@@ -367,21 +462,21 @@ export class Point extends DisposableObj<Point> {
 }
 
 export class PublicKey extends DisposableObj<PublicKey> {
-  constructor(pubKey: any, pubKeySize: number, computation: Computation) {
-    super(pubKey, blsct.PUBLIC_KEY_SIZE, computation);
+  constructor(pubKey: any, computation: Computation) {
+    super(pubKey, blsct.PUBLIC_KEY_SIZE, computation)
   }
 
   static random = (computation: Computation): PublicKey => {
     const rv = blsct.gen_random_public_key()
     const pubKey = blsct.cast_to_pub_key(rv.value)
-    const pubKeyObj = new PublicKey(pubKey, rv.value_size, computation)
+    const pubKeyObj = new PublicKey(pubKey, computation)
     blsct.free_obj(rv)
     return pubKeyObj
   }
 
   static fromScalar = (scalar: Scalar, computation: Computation): PublicKey => {
     const pubKey = blsct.scalar_to_pub_key(scalar.get())
-    return new PublicKey(pubKey, blsct.PUBLIC_KEY_SIZE, computation)
+    return new PublicKey(pubKey, computation)
   }
   
   get = (): any => {
@@ -399,6 +494,71 @@ export class PrivateKey extends DisposableObj<PrivateKey> {
 
   get = (): any => {
     return blsct.cast_to_pub_key(this.obj)
+  }
+}
+
+export class KeyId extends DisposableObj<KeyId> {
+  constructor(keyId: any, computation: Computation) {
+    super(keyId, blsct.KEY_ID_SIZE, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_key_id(this.obj)
+  }
+
+  toHex = (): string => {
+    return blsct.get_key_id_hex(this.get())
+  }
+}
+
+export class SubAddrId extends DisposableObj<SubAddrId> {
+  constructor(subAddrId: any, computation: Computation) {
+    super(subAddrId, blsct.SUB_ADDR_ID_SIZE, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_sub_addr_id(this.obj)
+  }
+
+  static fromAcctAddr = (
+    account: number,
+    address: number,
+    computation: Computation,
+  ): SubAddrId => {
+    const obj = blsct.gen_sub_addr_id(account, address);
+    return new SubAddrId(obj, computation)
+  }
+
+  getAccount = (): number => {
+    return blsct.get_sub_addr_id_account(this.get())
+  }
+
+  getAddress = (): number => {
+    return blsct.get_sub_addr_id_address(this.get())
+  }
+}
+
+export class SubAddr extends DisposableObj<SubAddr> {
+  constructor(subAddr: any, computation: Computation) {
+    super(subAddr, blsct.SUB_ADDR_SIZE, computation)
+  }
+
+  get = (): any => {
+    return blsct.cast_to_sub_addr(this.obj)
+  }
+
+  static derive = (
+    viewKey: Scalar,
+    spendingPubKey: PublicKey,
+    subAddrId: SubAddrId,
+    computation: Computation,
+  ): SubAddr => {
+    const obj = blsct.derive_sub_address(
+      viewKey.get(),
+      spendingPubKey.get(),
+      subAddrId.get(),
+    )
+    return new SubAddr(obj, computation)
   }
 }
 
@@ -465,36 +625,51 @@ export class Signature extends DisposableObj<Signature> {
 export class DoublePublicKey extends DisposableObj<DoublePublicKey> {
   private constructor(
     dpk: any,
-    dpkSize: number,
     computation: Computation,
   ) {
     const typedDpk = blsct.cast_to_dpk(dpk)
-    super(typedDpk, dpkSize, computation);
+    super(typedDpk, blsct.DOUBLE_PUBLIC_KEY_SIZE, computation);
   }
 
   // the ownership of `blsct_dpk` moves to this instance from the caller
-  static moveBlsctDoublePublicKey(
+  static moveBlsctDoublePublicKey = (
     dpk: any,
     dpkSize: number,
     computation: Computation,
-  ): DoublePublicKey {
-    return new DoublePublicKey(dpk, dpkSize, computation)
+  ): DoublePublicKey => {
+    return new DoublePublicKey(dpk, computation)
   }
 
-  static fromTwoPublicKeys(
+  static fromTwoPublicKeys = (
     pk1: PublicKey,
     pk2: PublicKey,
     computation: Computation,
-  ): DoublePublicKey {
+  ): DoublePublicKey => {
     const rv = blsct.gen_double_pub_key(
       pk1.get(), pk2.get()
     )
     if (rv.result !== 0) {
       throw new Error(`Failed to generate a double public key: ${rv.result}`)
     }
-    const dpk = new DoublePublicKey(rv.value, rv.value_size, computation)
+    const dpk = new DoublePublicKey(rv.value, computation)
     blsct.free_obj(rv)
     return dpk
+  }
+
+  static fromViewKeySpendingPubKeyAcctAddr = (
+    viewKey: Scalar,
+    spendingPubKey: PublicKey,
+    account: number,
+    address: number,
+    computation: Computation,
+  ): DoublePublicKey => {
+    const obj = blsct.gen_dpk_with_keys_and_sub_addr_id(
+      viewKey.get(),
+      spendingPubKey.get(),
+      account,
+      address,
+    )
+    return new DoublePublicKey(obj, computation) 
   }
 
   get = (): any => {

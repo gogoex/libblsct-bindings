@@ -13,6 +13,7 @@ console.log(scalar.toNumber())
 
 // point
 const point = C.RandomPoint()
+console.log(`point (isValid: ${point.isValid()}}`)
 
 // pubkey, dpk
 const pk1 = C.PublicKey()
@@ -199,8 +200,57 @@ for(let i=0; i<1; ++i) {
   const viewKey = C.fromTxKeyToViewKey(txKey)
   console.log(`viewKey: ${viewKey.toHex()}`)
 
-  const spendKey = C.fromTxKeyToSpendKey(txKey)
-  console.log(`spendKey: ${spendKey.toHex()}`)
+  const spendingKey = C.fromTxKeyToSpendingKey(txKey)
+  console.log(`spendingKey: ${spendingKey.toHex()}`)
+
+  const account = 123
+  const address = 456
+  const privSpendingKey = C.calcPrivSpendingKey(
+    blindingKey.toPublicKey(),
+    viewKey,
+    spendingKey,
+    account,
+    address,
+  )
+  console.log(`privSpendingKey: ${privSpendingKey.toHex()}`)
+
+  const viewTag = C.calcViewTag(
+    blindingKey.toPublicKey(),
+    viewKey,
+  )
+  console.log(`viewTag: ${viewTag}`)
+
+  // const hashId = C.calcHashId(
+  //   blindingKey.toPublicKey(),
+  //   spendingKey.toPublicKey(),
+  //   viewKey,
+  // )
+  // console.log(`hashId: ${hashId.toHex()}`)
+
+  const nonce = C.calcNonce(
+    blindingKey.toPublicKey(),
+    viewKey,
+  )
+  console.log(`nonce: ${nonce.toHex()}`)
+
+  const subAddrId = C.SubAddrId(account, address)
+  console.log(`subAddrId.account: ${subAddrId.getAccount()}`)
+  console.log(`subAddrId.address: ${subAddrId.getAddress()}`)
+
+  const _subAddr = C.deriveSubAddr(
+    viewKey,
+    spendingKey.toPublicKey(),
+    subAddrId,
+  )
+  console.log(`derievd sub addr`)
+
+  const _dpk = C.DoublcPublicKeyFromViewKeySpendingPubKeyAcctAddr(
+    viewKey,
+    spendingKey.toPublicKey(),
+    account,
+    address,
+  )
+  console.log(`generated dpk from view key, spending pub key, account and address`)
 }
 
 console.log('done')

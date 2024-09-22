@@ -4,11 +4,14 @@
 #include "../../navio-core/src/blsct/external_api/blsct.h"
 %}
 
-%constant size_t SCRIPT_SIZE = SCRIPT_SIZE;
-%constant size_t TX_ID_SIZE = TX_ID_SIZE;
-%constant size_t SIGNATURE_SIZE = SIGNATURE_SIZE;
-%constant size_t PUBLIC_KEY_SIZE = PUBLIC_KEY_SIZE;
+%constant size_t DOUBLE_PUBLIC_KEY_SIZE = DOUBLE_PUBLIC_KEY_SIZE;
+%constant size_t KEY_ID_SIZE = KEY_ID_SIZE;
 %constant size_t POINT_SIZE = POINT_SIZE;
+%constant size_t PUBLIC_KEY_SIZE = PUBLIC_KEY_SIZE;
+%constant size_t SCRIPT_SIZE = SCRIPT_SIZE;
+%constant size_t SIGNATURE_SIZE = SIGNATURE_SIZE;
+%constant size_t SUB_ADDR_ID_SIZE = SUB_ADDR_ID_SIZE;
+%constant size_t TX_ID_SIZE = TX_ID_SIZE;
 
 %inline %{
 #define HANDLE_MEM_ALLOC_FAILURE(name) \
@@ -69,12 +72,20 @@ if (p == nullptr) { \
     return static_cast<BlsctSubAddr*>(x);
   }
 
+  BlsctSubAddrId* cast_to_sub_addr_id(void* x) {
+    return static_cast<BlsctSubAddrId*>(x);
+  }
+
   CTxOut* cast_to_tx_out(void* x) {
     return static_cast<CTxOut*>(x);
   }
 
   CMutableTransaction* cast_to_tx(void* x) {
     return static_cast<CMutableTransaction*>(x);
+  }
+
+  CKeyID* cast_to_key_id(void* x) {
+    return static_cast<CKeyID*>(x);
   }
 
   uint8_t* cast_to_uint8_t_ptr(void* x) {
@@ -542,7 +553,67 @@ export BlsctScalar* from_tx_key_to_view_key(
     const BlsctScalar* blsct_tx_key
 );
 
-export BlsctScalar* from_tx_key_to_spend_key(
+export BlsctScalar* from_tx_key_to_spending_key(
     const BlsctScalar* blsct_tx_key
+);
+
+/* from multiple keys and other info */
+export BlsctScalar* calc_priv_spending_key(
+    const BlsctPubKey* blsct_blinding_pub_key,
+    const BlsctScalar* blsct_view_key,
+    const BlsctScalar* blsct_spending_key,
+    const int64_t account,
+    const uint64_t address
+);
+
+/* blsct/wallet/helpers delegators */
+export uint64_t calc_view_tag(
+    const BlsctPubKey* blinding_pub_key,
+    const BlsctScalar* view_key
+);
+
+export BlsctKeyId* calc_hash_id(
+    const BlsctPubKey* blsct_blinding_pub_key,
+    const BlsctPubKey* blsct_spending_pub_key,
+    const BlsctScalar* blsct_view_key
+);
+
+export const char* get_key_id_hex(
+  const BlsctKeyId* blsct_key_id
+);
+
+export BlsctPubKey* calc_nonce(
+    const BlsctPubKey* blsct_blinding_pub_key,
+    const BlsctScalar* view_key
+);
+
+export BlsctSubAddr* derive_sub_address(
+    const BlsctScalar* blsct_view_key,
+    const BlsctPubKey* blsct_spending_pub_key,
+    const BlsctSubAddrId* blsct_sub_addr_id
+);
+
+export BlsctSubAddrId* gen_sub_addr_id(
+    const int64_t account,
+    const uint64_t address
+);
+
+export int64_t get_sub_addr_id_account(
+    const BlsctSubAddrId* blsct_sub_addr_id
+);
+
+export uint64_t get_sub_addr_id_address(
+    const BlsctSubAddrId* blsct_sub_addr_id
+);
+
+export bool is_valid_point(
+  const BlsctPoint* blsct_point
+);
+
+export BlsctDoublePubKey* gen_dpk_with_keys_and_sub_addr_id(
+    const BlsctScalar* blsct_view_key,
+    const BlsctPubKey* blsct_spending_pub_key,
+    const int64_t account,
+    const uint64_t address
 );
 
