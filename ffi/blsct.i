@@ -355,6 +355,7 @@ export void free_amounts_ret_val(BlsctAmountsRetVal* rv);
 export BlsctRetVal* gen_scalar(const uint64_t n);
 export BlsctRetVal* gen_random_scalar();
 export uint64_t scalar_to_uint64(BlsctScalar* blsct_scalar);
+export const char* scalar_to_hex(const BlsctScalar* blsct_scalar);
 
 // point
 export BlsctRetVal* gen_random_point();
@@ -514,5 +515,34 @@ export bool verify_msg_sig(
 
 export BlsctPubKey* scalar_to_pub_key(
     const BlsctScalar* blsct_scalar
+);
+
+/* key derivation functions */
+
+/* from seed */
+export BlsctScalar* from_seed_to_child_key(
+    const BlsctScalar* blsct_seed
+);
+
+/* from child key */
+export BlsctScalar* from_child_key_to_blinding_key(
+    const BlsctScalar* blsct_child_key
+);
+
+export BlsctScalar* from_child_key_to_token_key(
+    const BlsctScalar* blsct_child_key
+);
+
+export BlsctScalar* from_child_key_to_tx_key(
+    const BlsctScalar* blsct_child_key
+);
+
+/* from tx key */
+export BlsctScalar* from_tx_key_to_view_key(
+    const BlsctScalar* blsct_tx_key
+);
+
+export BlsctScalar* from_tx_key_to_spend_key(
+    const BlsctScalar* blsct_tx_key
 );
 

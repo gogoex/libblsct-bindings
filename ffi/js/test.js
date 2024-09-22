@@ -179,6 +179,29 @@ for(let i=0; i<1; ++i) {
   assert(res3 === false)
 }
 
+// key derivation
+{
+  const seed = C.RandomScalar()
+  console.log(`seed: ${seed.toHex()}`)
+
+  const childKey = C.fromSeedToChildKey(seed)
+  console.log(`childKey: ${childKey.toHex()}`)
+
+  const blindingKey = C.fromChildKeyToBlindingKey(childKey)
+  console.log(`blindingKey: ${blindingKey.toHex()}`)
+
+  const tokenKey = C.fromChildKeyToTokenKey(childKey)
+  console.log(`tokenKey: ${tokenKey.toHex()}`)
+
+  const txKey = C.fromChildKeyToTxKey(childKey)
+  console.log(`txKey: ${txKey.toHex()}`)
+
+  const viewKey = C.fromTxKeyToViewKey(txKey)
+  console.log(`viewKey: ${viewKey.toHex()}`)
+
+  const spendKey = C.fromTxKeyToSpendKey(txKey)
+  console.log(`spendKey: ${spendKey.toHex()}`)
+}
 
 console.log('done')
 

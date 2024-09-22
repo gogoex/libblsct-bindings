@@ -130,6 +130,36 @@ export class Computation {
 
   ///
 
+  fromSeedToChildKey = (seed: Scalar): Scalar => {
+    const childKey = blsct.from_seed_to_child_key(seed.get())
+    return new Scalar(childKey, this)
+  }
+
+  fromChildKeyToBlindingKey = (childKey: Scalar): Scalar => {
+    const blindingKey = blsct.from_child_key_to_blinding_key(childKey.get())
+    return new Scalar(blindingKey, this)
+  }
+
+  fromChildKeyToTokenKey = (childKey: Scalar): Scalar => {
+    const tokenKey = blsct.from_child_key_to_token_key(childKey.get())
+    return new Scalar(tokenKey, this)
+  }
+
+  fromChildKeyToTxKey = (childKey: Scalar): Scalar => {
+    const txKey = blsct.from_child_key_to_tx_key(childKey.get())
+    return new Scalar(txKey, this)
+  }
+
+  fromTxKeyToViewKey = (txKey: Scalar): Scalar => {
+    const viewKey = blsct.from_tx_key_to_view_key(txKey.get())
+    return new Scalar(viewKey, this)
+  }
+
+  fromTxKeyToSpendKey = (txKey: Scalar): Scalar => {
+    const spendKey = blsct.from_tx_key_to_spend_key(txKey.get())
+    return new Scalar(spendKey, this)
+  }
+
   decodeAddress = (
     encodedAddr: string,
   ): DoublePublicKey => {
@@ -309,6 +339,10 @@ export class Scalar extends DisposableObj<Scalar> {
   toNumber(): number {
     return blsct.scalar_to_uint64(this.get())
   }
+
+  toHex = (): string => {
+    return blsct.scalar_to_hex(this.get())
+  }
 }
 
 export class Point extends DisposableObj<Point> {
@@ -328,8 +362,7 @@ export class Point extends DisposableObj<Point> {
   }
 
   toHex = (): string => {
-    const hex = blsct.point_to_hex(this.get())
-    return hex
+    return blsct.point_to_hex(this.get())
   }
 }
 
