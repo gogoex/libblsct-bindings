@@ -220,12 +220,12 @@ for(let i=0; i<1; ++i) {
   )
   console.log(`viewTag: ${viewTag}`)
 
-  // const hashId = C.calcHashId(
-  //   blindingKey.toPublicKey(),
-  //   spendingKey.toPublicKey(),
-  //   viewKey,
-  // )
-  // console.log(`hashId: ${hashId.toHex()}`)
+  const hashId = C.calcHashId(
+    blindingKey.toPublicKey(),
+    spendingKey.toPublicKey(),
+    viewKey,
+  )
+  console.log(`hashId: ${hashId.toHex()}`)
 
   const nonce = C.calcNonce(
     blindingKey.toPublicKey(),

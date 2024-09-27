@@ -84,8 +84,8 @@ if (p == nullptr) { \
     return static_cast<CMutableTransaction*>(x);
   }
 
-  CKeyID* cast_to_key_id(void* x) {
-    return static_cast<CKeyID*>(x);
+  BlsctKeyId* cast_to_key_id(void* x) {
+    return static_cast<BlsctKeyId*>(x);
   }
 
   uint8_t* cast_to_uint8_t_ptr(void* x) {
