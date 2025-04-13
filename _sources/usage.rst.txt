@@ -1,0 +1,23 @@
+Usage
+=====
+
+Installation
+------------
+
+To use navio_blsct, first install it using pip:
+
+.. code-block:: console
+
+   (.venv) $ pip install navio_blsct
+
+Initialization
+--------------
+
+It is required to call ``blsct.init()`` once in each process before using the `navio_blsct` library:
+
+.. py:function:: blsct.init()
+
+   Initializes the `navio_blsct` library and prepares the environment for use.
+
+   :return: None
+
