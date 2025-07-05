@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>HashId &#8212; navio_blsct  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OutPoint" href="out_point.html" />
+    <link rel="prev" title="DoublePublicKey" href="double_public_key.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="out_point.html" title="OutPoint"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="double_public_key.html" title="DoublePublicKey"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" accesskey="U">Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">HashId</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="hashid">
+<h1>HashId<a class="headerlink" href="#hashid" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="blsct.HashId">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">HashId</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blinding_pub_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="public_key.html#blsct.PublicKey" title="blsct.keys.public_key.PublicKey"><span class="pre">PublicKey</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spending_pub_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="public_key.html#blsct.PublicKey" title="blsct.keys.public_key.PublicKey"><span class="pre">PublicKey</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">view_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="view_key.html#blsct.ViewKey" title="blsct.keys.child_key_desc.tx_key_desc.view_key.ViewKey"><span class="pre">ViewKey</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.HashId" title="Link to this definition">¶</a></dt>
+<dd><p>Represents a hash ID consisting of a blinding public key, a spending public key, and a view key. Also known as <cite>CKeyId</cite> which is an alias for <cite>uint160</cite> on the C++ side.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChildKey</span><span class="p">,</span> <span class="n">HashId</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">,</span> <span class="n">ViewKey</span><span class="p">,</span> <span class="n">Scalar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">blinding_pub_key</span> <span class="o">=</span> <span class="n">PublicKey</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spending_pub_key</span> <span class="o">=</span> <span class="n">PublicKey</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">view_key</span> <span class="o">=</span> <span class="n">ChildKey</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">to_tx_key</span><span class="p">()</span><span class="o">.</span><span class="n">to_view_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hash_id</span> <span class="o">=</span> <span class="n">HashId</span><span class="p">(</span><span class="n">blinding_pub_key</span><span class="p">,</span> <span class="n">spending_pub_key</span><span class="p">,</span> <span class="n">view_key</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">hash_id</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deser</span> <span class="o">=</span> <span class="n">HashId</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">ser</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">==</span> <span class="n">deser</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.HashId.deserialize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#blsct.HashId.deserialize" title="Link to this definition">¶</a></dt>
+<dd><p>Deserialize the HashId from a hexadecimal string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.HashId.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#blsct.HashId.serialize" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the HashId to a hexadecimal string</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">HashId</a><ul>
+<li><a class="reference internal" href="#blsct.HashId"><code class="docutils literal notranslate"><span class="pre">HashId</span></code></a><ul>
+<li><a class="reference internal" href="#blsct.HashId.deserialize"><code class="docutils literal notranslate"><span class="pre">HashId.deserialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.HashId.serialize"><code class="docutils literal notranslate"><span class="pre">HashId.serialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="double_public_key.html"
+                          title="previous chapter">DoublePublicKey</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="out_point.html"
+                          title="next chapter">OutPoint</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hash_id.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="out_point.html" title="OutPoint"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="double_public_key.html" title="DoublePublicKey"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" >Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">HashId</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The Navio Developers.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

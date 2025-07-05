@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>RangeProof &#8212; navio_blsct  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scalar" href="scalar.html" />
+    <link rel="prev" title="PublicKey" href="public_key.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="scalar.html" title="Scalar"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="public_key.html" title="PublicKey"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" accesskey="U">Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">RangeProof</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="rangeproof">
+<h1>RangeProof<a class="headerlink" href="#rangeproof" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="blsct.RangeProof">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">RangeProof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amounts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="point.html#blsct.Point" title="blsct.point.Point"><span class="pre">Point</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="token_id.html#blsct.TokenId" title="blsct.token_id.TokenId"><span class="pre">TokenId</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.RangeProof" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Represents a (possibly aggregated) range proof for one or more confidential transaction amounts.</p>
+</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmountRecoveryReq</span><span class="p">,</span> <span class="n">AmountRecoveryRes</span><span class="p">,</span> <span class="n">Point</span><span class="p">,</span> <span class="n">RangeProof</span><span class="p">,</span> <span class="n">TokenId</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nonce</span> <span class="o">=</span> <span class="n">Point</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">token_id</span> <span class="o">=</span> <span class="n">TokenId</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span> <span class="o">=</span> <span class="n">RangeProof</span><span class="p">([</span><span class="mi">456</span><span class="p">],</span> <span class="n">nonce</span><span class="p">,</span> <span class="s1">&#39;navio&#39;</span><span class="p">,</span> <span class="n">token_id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RangeProof</span><span class="o">.</span><span class="n">verify_proofs</span><span class="p">([</span><span class="n">rp</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">req</span> <span class="o">=</span> <span class="n">AmountRecoveryReq</span><span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">RangeProof</span><span class="o">.</span><span class="n">recover_amounts</span><span class="p">([</span><span class="n">req</span><span class="p">])</span>
+<span class="go">0: AmtRecoveryRes(is_succ=True, amount=456, message=&#39;navio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_A</span><span class="p">()</span>
+<span class="go">Point(a2fb420771db27ad...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_A_wip</span><span class="p">()</span>
+<span class="go">Point(a110e82e7ce9db7b...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_B</span><span class="p">()</span>
+<span class="go">Point(b20c77bdcf884cc9...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_r_prime</span><span class="p">()</span>
+<span class="go">Scalar(2edf3c0ca70d395fda7c809776a3328824a5fc29bd6261afd7e03e9ab952a31b)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_s_prime</span><span class="p">()</span>
+<span class="go">Scalar(17fe26b25aeb9e2a24dcb257d308f27e57ab4fe6b852bead0259b8e0e4b9abe7)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_delta_prime</span><span class="p">()</span>
+<span class="go">Scalar(1bc93e6b42fb582f51ba0cd51d64ca2b85cebd15cb8a5c84a1df16f0c6b13cea)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_alpha_hat</span><span class="p">()</span>
+<span class="go">Scalar(1c1eaca43fbaf1ec5f1304ec56d0e29e639a5189a61a7bd752e1d449702c463b)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rp</span><span class="o">.</span><span class="n">get_tau_x</span><span class="p">()</span>
+<span class="go">Scalar(5e07a8b9254fab11399f42d5695c9bfe3d00bc6478c5a480442cfac6567ef2ee)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deser</span> <span class="o">=</span> <span class="n">RangeProof</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">ser</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">==</span> <span class="n">deser</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.deserialize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#blsct.RangeProof.deserialize" title="Link to this definition">¶</a></dt>
+<dd><p>Deserialize the RangeProof from a hexadecimal string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_A">
+<span class="sig-name descname"><span class="pre">get_A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="point.html#blsct.Point" title="blsct.point.Point"><span class="pre">Point</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_A" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element A.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_A_wip">
+<span class="sig-name descname"><span class="pre">get_A_wip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="point.html#blsct.Point" title="blsct.point.Point"><span class="pre">Point</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_A_wip" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element A_wip.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_B">
+<span class="sig-name descname"><span class="pre">get_B</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="point.html#blsct.Point" title="blsct.point.Point"><span class="pre">Point</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_B" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element B.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_alpha_hat">
+<span class="sig-name descname"><span class="pre">get_alpha_hat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_alpha_hat" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element alpha hat.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_delta_prime">
+<span class="sig-name descname"><span class="pre">get_delta_prime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_delta_prime" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element delta_prime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_r_prime">
+<span class="sig-name descname"><span class="pre">get_r_prime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_r_prime" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element r_prime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_s_prime">
+<span class="sig-name descname"><span class="pre">get_s_prime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_s_prime" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element s_prime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.get_tau_x">
+<span class="sig-name descname"><span class="pre">get_tau_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></span><a class="headerlink" href="#blsct.RangeProof.get_tau_x" title="Link to this definition">¶</a></dt>
+<dd><p>Get the range proof element tau_x.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.recover_amounts">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recover_amounts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="amount_recovery_req.html#blsct.AmountRecoveryReq" title="blsct.AmountRecoveryReq"><span class="pre">AmountRecoveryReq</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="amount_recovery_res.html#blsct.AmountRecoveryRes" title="blsct.AmountRecoveryRes"><span class="pre">AmountRecoveryRes</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blsct.RangeProof.recover_amounts" title="Link to this definition">¶</a></dt>
+<dd><p>Recover the amount from each given single-amount range proof. The results may include failures.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#blsct.RangeProof.serialize" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the RangeProof to a hexadecimal string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.RangeProof.verify_proofs">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_proofs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proofs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">TypeAliasForwardRef</span><span class="p"><span class="pre">(</span></span><span class="s"><span class="pre">'blsct.RangeProof'</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#blsct.RangeProof.verify_proofs" title="Link to this definition">¶</a></dt>
+<dd><p>Verify a list of range proofs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">RangeProof</a><ul>
+<li><a class="reference internal" href="#blsct.RangeProof"><code class="docutils literal notranslate"><span class="pre">RangeProof</span></code></a><ul>
+<li><a class="reference internal" href="#blsct.RangeProof.deserialize"><code class="docutils literal notranslate"><span class="pre">RangeProof.deserialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_A"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_A()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_A_wip"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_A_wip()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_B"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_B()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_alpha_hat"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_alpha_hat()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_delta_prime"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_delta_prime()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_r_prime"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_r_prime()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_s_prime"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_s_prime()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.get_tau_x"><code class="docutils literal notranslate"><span class="pre">RangeProof.get_tau_x()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.recover_amounts"><code class="docutils literal notranslate"><span class="pre">RangeProof.recover_amounts()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.serialize"><code class="docutils literal notranslate"><span class="pre">RangeProof.serialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.RangeProof.verify_proofs"><code class="docutils literal notranslate"><span class="pre">RangeProof.verify_proofs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="public_key.html"
+                          title="previous chapter">PublicKey</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scalar.html"
+                          title="next chapter">Scalar</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/range_proof.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="scalar.html" title="Scalar"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="public_key.html" title="PublicKey"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" >Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">RangeProof</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The Navio Developers.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
