@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CTx &#8212; navio_blsct  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CTxId" href="ctx_id.html" />
+    <link rel="prev" title="ChildKey" href="child_key.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ctx_id.html" title="CTxId"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="child_key.html" title="ChildKey"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" accesskey="U">Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CTx</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="ctx">
+<h1>CTx<a class="headerlink" href="#ctx" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="blsct.CTx">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">CTx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_ins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tx_in.html#blsct.TxIn" title="blsct.tx_in.TxIn"><span class="pre">TxIn</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_outs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tx_out.html#blsct.TxOut" title="blsct.tx_out.TxOut"><span class="pre">TxOut</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.CTx" title="Link to this definition">¶</a></dt>
+<dd><p>Represents a confidential transaction. Also known as <cite>CMutableTransaction</cite> on the C++ side.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChildKey</span><span class="p">,</span> <span class="n">DoublePublicKey</span><span class="p">,</span> <span class="n">OutPoint</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">,</span> <span class="n">SpendingKey</span><span class="p">,</span> <span class="n">SubAddr</span><span class="p">,</span> <span class="n">SubAddrId</span><span class="p">,</span> <span class="n">TokenId</span><span class="p">,</span> <span class="n">CTX_ID_SIZE</span><span class="p">,</span> <span class="n">CTx</span><span class="p">,</span> <span class="n">CTxId</span><span class="p">,</span> <span class="n">TxIn</span><span class="p">,</span> <span class="n">TxOut</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_tx_in</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_tx_out</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">default_fee</span> <span class="o">=</span> <span class="mi">200000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fee</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_tx_in</span> <span class="o">+</span> <span class="n">num_tx_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">default_fee</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_amount</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">in_amount</span> <span class="o">=</span> <span class="n">fee</span> <span class="o">+</span> <span class="n">out_amount</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx_id</span> <span class="o">=</span> <span class="n">CTxId</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_index</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">,</span> <span class="n">out_index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spending_key</span> <span class="o">=</span> <span class="n">SpendingKey</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">token_id</span> <span class="o">=</span> <span class="n">TokenId</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tx_in</span> <span class="o">=</span> <span class="n">TxIn</span><span class="p">(</span><span class="n">in_amount</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">spending_key</span><span class="p">,</span> <span class="n">token_id</span><span class="p">,</span> <span class="n">out_point</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_addr</span> <span class="o">=</span> <span class="n">SubAddr</span><span class="o">.</span><span class="n">from_double_public_key</span><span class="p">(</span><span class="n">DoublePublicKey</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tx_out</span> <span class="o">=</span> <span class="n">TxOut</span><span class="p">(</span><span class="n">sub_addr</span><span class="p">,</span> <span class="n">out_amount</span><span class="p">,</span> <span class="s1">&#39;navio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">CTx</span><span class="p">([</span><span class="n">tx_in</span><span class="p">],</span> <span class="p">[</span><span class="n">tx_out</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ctx_in</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_ctx_ins</span><span class="p">():</span> 
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prev_out_hash: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_prev_out_hash</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prev_out_n: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_prev_out_n</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script_sig: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_script_sig</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sequence: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script_witness: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_script_witness</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">prev_out_hash: CTxId(9194a7eaafe70c6f623eef4740c934f569b8a7f0a246ce4377c34a5bb9a6f126)</span>
+<span class="go">prev_out_n: 0</span>
+<span class="go">script_sig: Script(0000000000008f676000000000006b67400000000000726720000000)</span>
+<span class="go">sequence: 4294967295</span>
+<span class="go">script_witness: Script(0000000000008f676000000000006b67400000000000726720000000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ctx_out</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_ctx_outs</span><span class="p">():</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;value: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script_pub_key: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">get_script_pub_key</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.spending_key: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">blsct_data</span><span class="p">()</span><span class="o">.</span><span class="n">get_spending_key</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.ephemeral_key: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">blsct_data</span><span class="p">()</span><span class="o">.</span><span class="n">get_ephemeral_key</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.blinding_key: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">blsct_data</span><span class="p">()</span><span class="o">.</span><span class="n">get_blinding_key</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.view_tag: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">blsct_data</span><span class="p">()</span><span class="o">.</span><span class="n">get_view_tag</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="n">rp</span> <span class="o">=</span> <span class="n">ctx_out</span><span class="o">.</span><span class="n">blsct_data</span><span class="p">()</span><span class="o">.</span><span class="n">get_range_proof</span><span class="p">()</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.A: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_A</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.A_wip: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_A_wip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.B: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_B</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_Proof.r_prime: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_r_prime</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.s_prime: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_s_prime</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.delta_prime: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_delta_prime</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.alpha_hat: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_alpha_hat</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blsct_data.range_proof.tau_x: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">get_tau_x</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;token_id: token=</span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">get_token_id</span><span class="p">()</span><span class="o">.</span><span class="n">token</span><span class="p">()</span><span class="si">}</span><span class="s2">, subid=</span><span class="si">{</span><span class="n">tx_out</span><span class="o">.</span><span class="n">get_token_id</span><span class="p">()</span><span class="o">.</span><span class="n">subid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vector_predicate: </span><span class="si">{</span><span class="n">ctx_out</span><span class="o">.</span><span class="n">get_vector_predicate</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">value: 0</span>
+<span class="go">script_pub_key: Script(51000000000000000000000000000000000000000000000000000000)</span>
+<span class="go">blsct_data.spending_key: SpendingKey(2db08363ad3374035953866a054d5501da26aefbe55b4566d5e28a8bd1c3c051)</span>
+<span class="go">blsct_data.ephemeral_key: Point(b56c69fa701103d7228d365f4405ac81ca91dc7c4fe439e700289da87ca60d370680f1e03e64109bbce546028be38515)</span>
+<span class="go">blsct_data.blinding_key: BlindingKey(1f8947367d5a91d84b6e743072e55424b57b66e9030d84bc4d2c1f0f69633f29)</span>
+<span class="go">blsct_data.view_tag: 31130</span>
+<span class="go">blsct_data.range_proof.A: Point(a70ec0dfc74dc592c94e6a142824520af6aa42501cbd3700abc7fb8ef05b1b9da808a0f4eabf8a8a59eed227276a9339)</span>
+<span class="go">blsct_data.range_proof.A_wip: Point(afe823eeca1b6c81f781e96f016d9d3679b7808f7f6940a012a28c49e5e3230b8ab64ffaa5ca50d7577d193fd3b7fa47)</span>
+<span class="go">blsct_data.range_proof.B: Point(a93f76c421f03eef9744d232cc2d0c818830b7962db32350b23695107840f83ff2a976a4dd71abbb97fbb0d220d23921)</span>
+<span class="go">blsct_data.range_Proof.r_prime: Scalar(28383d7f0279a9d57da02f9cd763c2fd2ac3af13267c36da251ce4b1aeebaec7)</span>
+<span class="go">blsct_data.range_proof.s_prime: Scalar(164ba1cf029e24b9e8ef462ad741371f89e71ca7db5226f1bf331e18c55ac06b)</span>
+<span class="go">blsct_data.range_proof.delta_prime: Scalar(452a82bdb8e035d53e6e45b92bdd3d49fb68045f15f0b3dbd97df60ae3a84c1e)</span>
+<span class="go">blsct_data.range_proof.alpha_hat: Scalar(385ebad68297e142a0aa2e83897799df7a08adf0e8e23046884eb3ad041ea7bd)</span>
+<span class="go">blsct_data.range_proof.tau_x: Scalar(6b537c1670116d3a7518b45b1b9ba5608ed1b597ea40f018390e19e0cb0b0507)</span>
+<span class="go">token_id: token=0, subid=18446744073709551615</span>
+<span class="go">vector_predicate:</span>
+<span class="go">value: 0</span>
+<span class="go">script_pub_key: Script(51000000f5000000c000000020000000a00000040000800080000004)</span>
+<span class="go">blsct_data.spending_key: SpendingKey(24848b6f0958cf217783f48f260366e0e0c2ccda954a0188e83381c61bf33902)</span>
+<span class="go">blsct_data.ephemeral_key: Point(800bfdedb0bee4dcf6f56309a8c6c566a57c12f77f0f2320243c672c7529451598b327f0fe58df8bbd655014620fcd8a)</span>
+<span class="go">blsct_data.blinding_key: BlindingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
+<span class="go">blsct_data.view_tag: 21881</span>
+<span class="go">blsct_data.range_proof.A: Point(8731fba528d2461adc510c2cea6538cb4c31869448ee04f83665aa24a83c6a79aff088893d908ad7df4236e8c10a7ed1)</span>
+<span class="go">blsct_data.range_proof.A_wip: Point(b739df1c0a90ec625e155b2a371eaf20c87b0e9e1f354d233793553a61b472b804d1504640db589aec88faba42842798)</span>
+<span class="go">blsct_data.range_proof.B: Point(8c1598246f94d52ce83b441eeaff84850f962a21ad2613740ccf21d1b032465070381ad8481bc245f25c2a61a535e5fc)</span>
+<span class="go">blsct_data.range_Proof.r_prime: Scalar(1de1c43d513ce5096bbdda19ca6ac1543cdad4bfb7bef9fcfdefa75ea9a48a88)</span>
+<span class="go">blsct_data.range_proof.s_prime: Scalar(71f2f4ef98c06db856707d00063ae8ec4056e65c752dff7a43202e02879eda82)</span>
+<span class="go">blsct_data.range_proof.delta_prime: Scalar(5a8ce55526ff2b178b85d113086fa666311002368e34cd4fa577018436049d88)</span>
+<span class="go">blsct_data.range_proof.alpha_hat: Scalar(6c99352423c2ff98671fdc97fefc00dc427022c88bab93acf1a5ed2d28311d26)</span>
+<span class="go">blsct_data.range_proof.tau_x: Scalar(4193251795eaf35243e68c9fef5dd7cafd3c34bcc0422c5c5b8f825c56767546)</span>
+<span class="go">token_id: token=0, subid=18446744073709551615</span>
+<span class="go">vector_predicate:</span>
+<span class="go">value: 292125</span>
+<span class="go">script_pub_key: Script(6a00000000000000ac00000000007400000000000000000001000000)</span>
+<span class="go">blsct_data.spending_key: SpendingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
+<span class="go">blsct_data.ephemeral_key: Point(c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)</span>
+<span class="go">blsct_data.blinding_key: BlindingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
+<span class="go">blsct_data.view_tag: 0</span>
+<span class="go">blsct_data.range_proof.A: Point(c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)</span>
+<span class="go">blsct_data.range_proof.A_wip: Point(c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)</span>
+<span class="go">blsct_data.range_proof.B: Point(c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)</span>
+<span class="go">blsct_data.range_Proof.r_prime: Scalar(0)</span>
+<span class="go">blsct_data.range_proof.s_prime: Scalar(0)</span>
+<span class="go">blsct_data.range_proof.delta_prime: Scalar(0)</span>
+<span class="go">blsct_data.range_proof.alpha_hat: Scalar(0)</span>
+<span class="go">blsct_data.range_proof.tau_x: Scalar(0)</span>
+<span class="go">token_id: token=0, subid=18446744073709551615</span>
+<span class="go">vector_predicate: 03b8d499d518e3b451b71cfab4d84bf885f46252aed7dc6d9dddc743cd3c996b5f0518596d5292a02980426512f7a31555</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deser</span> <span class="o">=</span> <span class="n">CTx</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">ser</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">==</span> <span class="n">deser</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTx.deserialize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#blsct.CTx.deserialize" title="Link to this definition">¶</a></dt>
+<dd><p>Deserialize a transaction from a hexadecimal string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTx.get_ctx_id">
+<span class="sig-name descname"><span class="pre">get_ctx_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="ctx_id.html#blsct.CTxId" title="blsct.ctx_id.CTxId"><span class="pre">CTxId</span></a></span></span><a class="headerlink" href="#blsct.CTx.get_ctx_id" title="Link to this definition">¶</a></dt>
+<dd><p>Get the transaction ID.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTx.get_ctx_ins">
+<span class="sig-name descname"><span class="pre">get_ctx_ins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ctx_in.html#blsct.CTxIn" title="blsct.ctx_in.CTxIn"><span class="pre">CTxIn</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blsct.CTx.get_ctx_ins" title="Link to this definition">¶</a></dt>
+<dd><p>Get the list of CTxIns generated from TxIns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTx.get_ctx_outs">
+<span class="sig-name descname"><span class="pre">get_ctx_outs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ctx_out.html#blsct.CTxOut" title="blsct.ctx_out.CTxOut"><span class="pre">CTxOut</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#blsct.CTx.get_ctx_outs" title="Link to this definition">¶</a></dt>
+<dd><p>Get the list of CTxOuts generated from TxOuts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTx.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#blsct.CTx.serialize" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the transaction to a hexadecimal string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">CTx</a><ul>
+<li><a class="reference internal" href="#blsct.CTx"><code class="docutils literal notranslate"><span class="pre">CTx</span></code></a><ul>
+<li><a class="reference internal" href="#blsct.CTx.deserialize"><code class="docutils literal notranslate"><span class="pre">CTx.deserialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTx.get_ctx_id"><code class="docutils literal notranslate"><span class="pre">CTx.get_ctx_id()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTx.get_ctx_ins"><code class="docutils literal notranslate"><span class="pre">CTx.get_ctx_ins()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTx.get_ctx_outs"><code class="docutils literal notranslate"><span class="pre">CTx.get_ctx_outs()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTx.serialize"><code class="docutils literal notranslate"><span class="pre">CTx.serialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="child_key.html"
+                          title="previous chapter">ChildKey</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ctx_id.html"
+                          title="next chapter">CTxId</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ctx.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ctx_id.html" title="CTxId"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="child_key.html" title="ChildKey"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" >Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CTx</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The Navio Developers.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
