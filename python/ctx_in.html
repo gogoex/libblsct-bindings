@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CTxIn &#8212; navio_blsct  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CTxOut" href="ctx_out.html" />
+    <link rel="prev" title="CTxId" href="ctx_id.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ctx_out.html" title="CTxOut"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ctx_id.html" title="CTxId"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" accesskey="U">Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CTxIn</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="ctxin">
+<h1>CTxIn<a class="headerlink" href="#ctxin" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="blsct.CTxIn">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">CTxIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.CTxIn" title="Link to this definition">¶</a></dt>
+<dd><p>Represents a transaction input in a constructed confidential transaction. Also known as <cite>CTxIn</cite> on the C++ side.</p>
+<p>For code examples, see the <cite>ctx.py</cite> class documentation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.deserialize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#blsct.CTxIn.deserialize" title="Link to this definition">¶</a></dt>
+<dd><p>Create a CTxIn from a hexadecimal string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.get_prev_out_hash">
+<span class="sig-name descname"><span class="pre">get_prev_out_hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="ctx_id.html#blsct.CTxId" title="blsct.ctx_id.CTxId"><span class="pre">CTxId</span></a></span></span><a class="headerlink" href="#blsct.CTxIn.get_prev_out_hash" title="Link to this definition">¶</a></dt>
+<dd><p>Get the transaction ID of the previous output being spent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.get_prev_out_n">
+<span class="sig-name descname"><span class="pre">get_prev_out_n</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blsct.CTxIn.get_prev_out_n" title="Link to this definition">¶</a></dt>
+<dd><p>Get the output index of the previous output being spent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.get_script_sig">
+<span class="sig-name descname"><span class="pre">get_script_sig</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="script.html#blsct.Script" title="blsct.script.Script"><span class="pre">Script</span></a></span></span><a class="headerlink" href="#blsct.CTxIn.get_script_sig" title="Link to this definition">¶</a></dt>
+<dd><p>Get the scriptSig used to unlock the previous output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.get_script_witness">
+<span class="sig-name descname"><span class="pre">get_script_witness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="script.html#blsct.Script" title="blsct.script.Script"><span class="pre">Script</span></a></span></span><a class="headerlink" href="#blsct.CTxIn.get_script_witness" title="Link to this definition">¶</a></dt>
+<dd><p>Get the scriptWitness for the transaction input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.get_sequence">
+<span class="sig-name descname"><span class="pre">get_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#blsct.CTxIn.get_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>Get the sequence field of the transaction input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.CTxIn.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#blsct.CTxIn.serialize" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the CTxIn object to a hexadecimal string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">CTxIn</a><ul>
+<li><a class="reference internal" href="#blsct.CTxIn"><code class="docutils literal notranslate"><span class="pre">CTxIn</span></code></a><ul>
+<li><a class="reference internal" href="#blsct.CTxIn.deserialize"><code class="docutils literal notranslate"><span class="pre">CTxIn.deserialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.get_prev_out_hash"><code class="docutils literal notranslate"><span class="pre">CTxIn.get_prev_out_hash()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.get_prev_out_n"><code class="docutils literal notranslate"><span class="pre">CTxIn.get_prev_out_n()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.get_script_sig"><code class="docutils literal notranslate"><span class="pre">CTxIn.get_script_sig()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.get_script_witness"><code class="docutils literal notranslate"><span class="pre">CTxIn.get_script_witness()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.get_sequence"><code class="docutils literal notranslate"><span class="pre">CTxIn.get_sequence()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.CTxIn.serialize"><code class="docutils literal notranslate"><span class="pre">CTxIn.serialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ctx_id.html"
+                          title="previous chapter">CTxId</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ctx_out.html"
+                          title="next chapter">CTxOut</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ctx_in.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ctx_out.html" title="CTxOut"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ctx_id.html" title="CTxId"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">navio_blsct  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" >Classes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CTxIn</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The Navio Developers.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
