@@ -45,7 +45,7 @@
 <h1>SubAddr<a class="headerlink" href="#subaddr" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="blsct.SubAddr">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">SubAddr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="view_key.html#blsct.ViewKey" title="blsct.keys.child_key_desc.tx_key_desc.view_key.ViewKey"><span class="pre">ViewKey</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spending_pub_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="public_key.html#blsct.PublicKey" title="blsct.keys.public_key.PublicKey"><span class="pre">PublicKey</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_addr_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sub_addr_id.html#blsct.SubAddrId" title="blsct.sub_addr_id.SubAddrId"><span class="pre">SubAddrId</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.SubAddr" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">SubAddr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scalar.html#blsct.Scalar" title="blsct.scalar.Scalar"><span class="pre">Scalar</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spending_pub_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="public_key.html#blsct.PublicKey" title="blsct.keys.public_key.PublicKey"><span class="pre">PublicKey</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_addr_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sub_addr_id.html#blsct.SubAddrId" title="blsct.sub_addr_id.SubAddrId"><span class="pre">SubAddrId</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.SubAddr" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a sub-address.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChildKey</span><span class="p">,</span> <span class="n">DoublePublicKey</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">,</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">SubAddr</span><span class="p">,</span> <span class="n">SubAddrId</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span>
@@ -80,6 +80,12 @@
 <dd><p>Serialize the SubAddr to a hexadecimal string</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="blsct.SubAddr.to_double_public_key">
+<span class="sig-name descname"><span class="pre">to_double_public_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey" title="blsct.keys.double_public_key.DoublePublicKey"><span class="pre">DoublePublicKey</span></a></span></span><a class="headerlink" href="#blsct.SubAddr.to_double_public_key" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the SubAddr to a DoublePublicKey</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -99,6 +105,7 @@
 <li><a class="reference internal" href="#blsct.SubAddr.deserialize"><code class="docutils literal notranslate"><span class="pre">SubAddr.deserialize()</span></code></a></li>
 <li><a class="reference internal" href="#blsct.SubAddr.from_double_public_key"><code class="docutils literal notranslate"><span class="pre">SubAddr.from_double_public_key()</span></code></a></li>
 <li><a class="reference internal" href="#blsct.SubAddr.serialize"><code class="docutils literal notranslate"><span class="pre">SubAddr.serialize()</span></code></a></li>
+<li><a class="reference internal" href="#blsct.SubAddr.to_double_public_key"><code class="docutils literal notranslate"><span class="pre">SubAddr.to_double_public_key()</span></code></a></li>
 </ul>
 </li>
 </ul>
