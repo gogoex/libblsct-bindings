@@ -47,7 +47,7 @@
 <dt class="sig sig-object py" id="blsct.CTx">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">blsct.</span></span><span class="sig-name descname"><span class="pre">CTx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_ins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tx_in.html#blsct.TxIn" title="blsct.tx_in.TxIn"><span class="pre">TxIn</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx_outs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tx_out.html#blsct.TxOut" title="blsct.tx_out.TxOut"><span class="pre">TxOut</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blsct.CTx" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a confidential transaction. Also known as <cite>CMutableTransaction</cite> on the C++ side.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChildKey</span><span class="p">,</span> <span class="n">DoublePublicKey</span><span class="p">,</span> <span class="n">OutPoint</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">,</span> <span class="n">SpendingKey</span><span class="p">,</span> <span class="n">SubAddr</span><span class="p">,</span> <span class="n">SubAddrId</span><span class="p">,</span> <span class="n">TokenId</span><span class="p">,</span> <span class="n">CTX_ID_SIZE</span><span class="p">,</span> <span class="n">CTx</span><span class="p">,</span> <span class="n">CTxId</span><span class="p">,</span> <span class="n">TxIn</span><span class="p">,</span> <span class="n">TxOut</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">blsct</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChildKey</span><span class="p">,</span> <span class="n">DoublePublicKey</span><span class="p">,</span> <span class="n">OutPoint</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">,</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">SubAddr</span><span class="p">,</span> <span class="n">SubAddrId</span><span class="p">,</span> <span class="n">TokenId</span><span class="p">,</span> <span class="n">CTX_ID_SIZE</span><span class="p">,</span> <span class="n">CTx</span><span class="p">,</span> <span class="n">CTxId</span><span class="p">,</span> <span class="n">TxIn</span><span class="p">,</span> <span class="n">TxOut</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">num_tx_in</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">num_tx_out</span> <span class="o">=</span> <span class="mi">1</span>
@@ -59,7 +59,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">out_index</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">,</span> <span class="n">out_index</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">spending_key</span> <span class="o">=</span> <span class="n">SpendingKey</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spending_key</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">token_id</span> <span class="o">=</span> <span class="n">TokenId</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tx_in</span> <span class="o">=</span> <span class="n">TxIn</span><span class="p">(</span><span class="n">in_amount</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">spending_key</span><span class="p">,</span> <span class="n">token_id</span><span class="p">,</span> <span class="n">out_point</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sub_addr</span> <span class="o">=</span> <span class="n">SubAddr</span><span class="o">.</span><span class="n">from_double_public_key</span><span class="p">(</span><span class="n">DoublePublicKey</span><span class="p">())</span>
@@ -102,7 +102,7 @@
 <span class="gp">...</span>
 <span class="go">value: 0</span>
 <span class="go">script_pub_key: Script(51000000000000000000000000000000000000000000000000000000)</span>
-<span class="go">blsct_data.spending_key: SpendingKey(2db08363ad3374035953866a054d5501da26aefbe55b4566d5e28a8bd1c3c051)</span>
+<span class="go">blsct_data.spending_key: Scalar(2db08363ad3374035953866a054d5501da26aefbe55b4566d5e28a8bd1c3c051)</span>
 <span class="go">blsct_data.ephemeral_key: Point(b56c69fa701103d7228d365f4405ac81ca91dc7c4fe439e700289da87ca60d370680f1e03e64109bbce546028be38515)</span>
 <span class="go">blsct_data.blinding_key: BlindingKey(1f8947367d5a91d84b6e743072e55424b57b66e9030d84bc4d2c1f0f69633f29)</span>
 <span class="go">blsct_data.view_tag: 31130</span>
@@ -118,7 +118,7 @@
 <span class="go">vector_predicate:</span>
 <span class="go">value: 0</span>
 <span class="go">script_pub_key: Script(51000000f5000000c000000020000000a00000040000800080000004)</span>
-<span class="go">blsct_data.spending_key: SpendingKey(24848b6f0958cf217783f48f260366e0e0c2ccda954a0188e83381c61bf33902)</span>
+<span class="go">blsct_data.spending_key: Scalar(24848b6f0958cf217783f48f260366e0e0c2ccda954a0188e83381c61bf33902)</span>
 <span class="go">blsct_data.ephemeral_key: Point(800bfdedb0bee4dcf6f56309a8c6c566a57c12f77f0f2320243c672c7529451598b327f0fe58df8bbd655014620fcd8a)</span>
 <span class="go">blsct_data.blinding_key: BlindingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
 <span class="go">blsct_data.view_tag: 21881</span>
@@ -134,7 +134,7 @@
 <span class="go">vector_predicate:</span>
 <span class="go">value: 292125</span>
 <span class="go">script_pub_key: Script(6a00000000000000ac00000000007400000000000000000001000000)</span>
-<span class="go">blsct_data.spending_key: SpendingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
+<span class="go">blsct_data.spending_key: Scalar(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
 <span class="go">blsct_data.ephemeral_key: Point(c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)</span>
 <span class="go">blsct_data.blinding_key: BlindingKey(4c1258acd66282b7ccc627f7f65e27faac425bfd0001a40100000000ffffffff)</span>
 <span class="go">blsct_data.view_tag: 0</span>
