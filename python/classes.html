@@ -140,7 +140,7 @@
 <li class="toctree-l2"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey.deserialize"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey.deserialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey.from_keys_acct_addr"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey.from_keys_acct_addr()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey.from_public_keys"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey.from_public_keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey.from_view_and_spend_keys"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey.from_view_and_spend_keys()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="double_public_key.html#blsct.DoublePublicKey.serialize"><code class="docutils literal notranslate"><span class="pre">DoublePublicKey.serialize()</span></code></a></li>
 </ul>
 </li>
@@ -169,6 +169,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point.html#blsct.Point.is_valid"><code class="docutils literal notranslate"><span class="pre">Point.is_valid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="point.html#blsct.Point.pretty_print"><code class="docutils literal notranslate"><span class="pre">Point.pretty_print()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="point.html#blsct.Point.random"><code class="docutils literal notranslate"><span class="pre">Point.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="point.html#blsct.Point.scalar_multiply"><code class="docutils literal notranslate"><span class="pre">Point.scalar_multiply()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="point.html#blsct.Point.serialize"><code class="docutils literal notranslate"><span class="pre">Point.serialize()</span></code></a></li>
 </ul>
 </li>
@@ -298,10 +299,12 @@
 <li class="toctree-l2"><a class="reference internal" href="tx_out.html#blsct.TxOut"><code class="docutils literal notranslate"><span class="pre">TxOut</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.deserialize"><code class="docutils literal notranslate"><span class="pre">TxOut.deserialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_amount"><code class="docutils literal notranslate"><span class="pre">TxOut.get_amount()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_blinding_key"><code class="docutils literal notranslate"><span class="pre">TxOut.get_blinding_key()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_destination"><code class="docutils literal notranslate"><span class="pre">TxOut.get_destination()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_memo"><code class="docutils literal notranslate"><span class="pre">TxOut.get_memo()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_min_stake"><code class="docutils literal notranslate"><span class="pre">TxOut.get_min_stake()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_output_type"><code class="docutils literal notranslate"><span class="pre">TxOut.get_output_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_subtract_fee_from_amount"><code class="docutils literal notranslate"><span class="pre">TxOut.get_subtract_fee_from_amount()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.get_token_id"><code class="docutils literal notranslate"><span class="pre">TxOut.get_token_id()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="tx_out.html#blsct.TxOut.serialize"><code class="docutils literal notranslate"><span class="pre">TxOut.serialize()</span></code></a></li>
 </ul>
@@ -373,7 +376,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2025, The Navio Developers.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>
