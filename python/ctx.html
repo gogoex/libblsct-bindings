@@ -56,8 +56,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">out_amount</span> <span class="o">=</span> <span class="mi">10000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">in_amount</span> <span class="o">=</span> <span class="n">fee</span> <span class="o">+</span> <span class="n">out_amount</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ctx_id</span> <span class="o">=</span> <span class="n">CTxId</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out_index</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">,</span> <span class="n">out_index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spending_key</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">token_id</span> <span class="o">=</span> <span class="n">TokenId</span><span class="p">()</span>
@@ -69,13 +68,11 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ctx_ins</span><span class="o">.</span><span class="n">size</span><span class="p">()):</span>
 <span class="gp">... </span>  <span class="n">ctx_in</span> <span class="o">=</span> <span class="n">ctx_ins</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 <span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prev_out_hash: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_prev_out_hash</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prev_out_n: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_prev_out_n</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script_sig: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_script_sig</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sequence: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script_witness: </span><span class="si">{</span><span class="n">ctx_in</span><span class="o">.</span><span class="n">get_script_witness</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">prev_out_hash: CTxId(9194a7eaafe70c6f623eef4740c934f569b8a7f0a246ce4377c34a5bb9a6f126)</span>
-<span class="go">prev_out_n: 0</span>
 <span class="go">script_sig: Script(0000000000008f676000000000006b67400000000000726720000000)</span>
 <span class="go">sequence: 4294967295</span>
 <span class="go">script_witness: Script(0000000000008f676000000000006b67400000000000726720000000)</span>

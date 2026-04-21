@@ -57,8 +57,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">out_amount</span> <span class="o">=</span> <span class="mi">10000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">in_amount</span> <span class="o">=</span> <span class="n">fee</span> <span class="o">+</span> <span class="n">out_amount</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ctx_id</span> <span class="o">=</span> <span class="n">CTxId</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out_index</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">,</span> <span class="n">out_index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_point</span> <span class="o">=</span> <span class="n">OutPoint</span><span class="p">(</span><span class="n">ctx_id</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spending_key</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">token_id</span> <span class="o">=</span> <span class="n">TokenId</span><span class="p">()</span>
